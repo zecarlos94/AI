@@ -1,6 +1,7 @@
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -30,6 +31,9 @@ public class DefinerAgent extends GuiAgent{
 
     @Override
     protected void setup() {
+
+
+
         myGui=new DefinerGui(this);
         myGui.frame.setVisible(true);
 
@@ -94,8 +98,8 @@ public class DefinerAgent extends GuiAgent{
 
 
         }else{
-            this.addBehaviour(new ReceiveBehaviour());
-            message=(String)guiEvent.getSource();
+            this.addBehaviour(new CommunicationBehaviour(message=(String)guiEvent.getSource(),System.currentTimeMillis()));
+
         }
     }
 
@@ -180,15 +184,49 @@ public class DefinerAgent extends GuiAgent{
 
 
 
-    public class ReceiveBehaviour extends CyclicBehaviour{
+    public class CommunicationBehaviour extends SimpleBehaviour {
+
+        protected String content;
+        protected long time;
+        public CommunicationBehaviour(String f,long time){
+            content = f;
+            this.time = time;
+        }
+
+        @Override
+        public boolean done() {
+            return (System.currentTimeMillis()>(time+10000));
+        }
+
         @Override
         public void action() {
-            ACLMessage msg=receive();
-            if(msg!=null){
-                if(msg.getPerformative()==0){
-                    System.out.println("Received message from "+msg.getSender()+" .Conteúdo: "+msg.getContent());
+
+            AID receiver=new AID();
+            // o receiver será o agente sector
+            // TODO dar o nome sector ao SectorAgent
+            receiver.setLocalName("sector");
+            long time=System.currentTimeMillis();
+            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
+            msg.setContent("Está disponivel?");
+            msg.setConversationId(""+time);
+            msg.addReceiver(receiver);
+            send(msg);
+
+            ACLMessage msg1 = receive();
+            while(msg1==null) msg1 = receive();
+            if(msg1 != null){
+                if(msg1.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
+
+
+                    ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+                    System.out.println("Received message from "+msg1.getSender().getLocalName()+". Conteúdo: "+ msg1.getContent());
+                    time = System.currentTimeMillis();
+                    msg2.setContent(content);
+                    msg2.setConversationId(""+time);
+                    msg2.addReceiver(receiver);
+                    send(msg2);
                 }else{
-                    System.out.println("Received message from "+msg.getSender()+" .Conteúdo: The offer to play ping pong was not accepted.");
+                    //JOptionPane.showMessageDialog(myGui.frame,"SectorAgent not available, try again later!");
                 }
             }
             block();

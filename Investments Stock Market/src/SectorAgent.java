@@ -1,3 +1,4 @@
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
@@ -6,14 +7,34 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+
 /**
  * Created by zecarlos on 10/11/16.
  */
 public class SectorAgent extends Agent {
 
+    public TreeMap<String,List<Empresa>> areaFilter;
+
+
+
     @Override
     protected void setup(){
         super.setup();
+
+        areaFilter = new TreeMap<String,List<Empresa>>();
+
+        ArrayList<Empresa> lista = new ArrayList<Empresa >();
+        lista.add(new Empresa("A"));
+        lista.add(new Empresa("B"));
+        lista.add(new Empresa("C"));
+        areaFilter.put("Finanças",lista);
+
+
+
         System.out.println(this.getLocalName()+ " starting!");
 
        //registo do serviço
@@ -67,7 +88,25 @@ public class SectorAgent extends Agent {
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                }else{
+                }else if(msg.getPerformative()==ACLMessage.INFORM){
+                    System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
+                    List<Empresa> lista = areaFilter.get(msg.getContent());
+
+                    ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
+                    AID receiver=new AID();
+                    receiver.setLocalName("analyser");
+                    long time=System.currentTimeMillis();
+                    msg1.addReceiver(receiver);
+                    msg1.setConversationId(""+time);
+
+                    for (Empresa e: lista){
+                        msg1.setContent(e.getNome()+","+e.getCapital()+","+e.getStockAvailable()+","+e.getStockPrice());
+                        send(msg1);
+                    }
+
+
+                }
+                else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
