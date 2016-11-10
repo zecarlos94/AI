@@ -36,6 +36,7 @@ public class S1 extends GuiAgent{
         myGui.frame.setVisible(true);
     }
 
+
     @Override
     protected void takeDown(){
         super.takeDown();

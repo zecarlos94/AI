@@ -2,6 +2,10 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
@@ -28,8 +32,32 @@ public class DefinerAgent extends GuiAgent{
     protected void setup() {
         myGui=new DefinerGui(this);
         myGui.frame.setVisible(true);
-    }
 
+        //registo do serviço
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("DefinerAgent");
+        sd.setName("DefinerAgent");
+        dfd.addServices(sd);
+        try{
+            DFService.register(this,dfd);
+        }catch (FIPAException e){
+            e.printStackTrace();
+        }
+
+    }
+    @Override
+    protected void takeDown(){
+
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+        System.out.println(this.getLocalName()+ " finishing!");
+        super.takeDown();
+    }
     @Override
     protected void onGuiEvent(GuiEvent guiEvent) {
         int cmd=guiEvent.getType();
@@ -40,14 +68,33 @@ public class DefinerAgent extends GuiAgent{
             // TODO dar o nome sector ao SectorAgent
             receiver.setLocalName("sector");
             long time=System.currentTimeMillis();
-            ACLMessage msg=new ACLMessage(ACLMessage.INFORM);
-            msg.setContent(content);
+            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
+            msg.setContent("Está disponivel?");
             msg.setConversationId(""+time);
             msg.addReceiver(receiver);
             send(msg);
+
+            ACLMessage msg1 = receive();
+            while(msg1==null) msg1 = receive();
+            if(msg1 != null){
+                if(msg1.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
+
+
+                    ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+                    System.out.println("Received message from "+msg1.getSender().getLocalName()+". Conteúdo: "+ msg1.getContent());
+                    time = System.currentTimeMillis();
+                    msg2.setContent(content);
+                    msg2.setConversationId(""+time);
+                    msg2.addReceiver(receiver);
+                    send(msg2);
+                }else{
+                    JOptionPane.showMessageDialog(myGui.frame,"SectorAgent not available, try again later!");
+                }
+            }
+
+
         }else{
             this.addBehaviour(new ReceiveBehaviour());
-            this.addBehaviour(new SendMessage(this,2000));
             message=(String)guiEvent.getSource();
         }
     }
@@ -131,35 +178,7 @@ public class DefinerAgent extends GuiAgent{
 
     };
 
-    public class SendMessage extends TickerBehaviour {
-        public SendMessage(Agent a, long timeout){
-            super(a,timeout);
-        }
 
-
-        @Override
-        protected void onTick() {
-            AID receiver=new AID();
-            receiver.setLocalName("sector");
-            long time=System.currentTimeMillis();
-
-            if(time%2==0){
-                ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
-                msg1.setContent(message);
-                msg1.setConversationId(""+time);
-                msg1.addReceiver(receiver);
-                myAgent.send(msg1);
-            }
-            else{
-                ACLMessage msg2=new ACLMessage(ACLMessage.INFORM);
-                msg2.setContent(message);
-                msg2.setConversationId(""+time);
-                msg2.addReceiver(receiver);
-                myAgent.send(msg2);
-            }
-            block(1000);
-        }
-    };
 
     public class ReceiveBehaviour extends CyclicBehaviour{
         @Override
@@ -167,7 +186,7 @@ public class DefinerAgent extends GuiAgent{
             ACLMessage msg=receive();
             if(msg!=null){
                 if(msg.getPerformative()==0){
-                    System.out.println("Received message from "+msg.getSender()+" .Conteúdo: OK! Let's play ping pong.");
+                    System.out.println("Received message from "+msg.getSender()+" .Conteúdo: "+msg.getContent());
                 }else{
                     System.out.println("Received message from "+msg.getSender()+" .Conteúdo: The offer to play ping pong was not accepted.");
                 }
