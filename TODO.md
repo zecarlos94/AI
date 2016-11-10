@@ -30,3 +30,5 @@ Agente Licitador: Rui
 						
 Agente Vendedor: Armando
 1. Vende o máximo de ações que conseguir de todas as empresas listadas como não viáveis.
+
+É ainda preciso criar uma Ontologia(ver ONTOLOGY.md)
