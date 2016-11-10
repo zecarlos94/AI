@@ -11,11 +11,19 @@ public class S1 extends Agent {
 
     protected String message;
 
+
     @Override
     protected void setup() {
         super.setup();
+        System.out.println(this.getLocalName()+ " starting...");
         this.addBehaviour(new ReceiveBehaviour());
         this.addBehaviour(new SendMessage(this,2000,"Let's talk?"));
+    }
+
+    @Override
+    protected void takeDown(){
+        super.takeDown();
+        System.out.println(this.getLocalName()+ " finished");
     }
 
     public class SendMessage extends TickerBehaviour {
@@ -26,14 +34,37 @@ public class S1 extends Agent {
 
         @Override
         protected void onTick() {
+            int counter=0;
             AID receiver=new AID();
             receiver.setLocalName("proposal");
             long time=System.currentTimeMillis();
-            ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
-            msg1.setContent(message);
-            msg1.setConversationId(""+time);
-            msg1.addReceiver(receiver);
-            myAgent.send(msg1);
+            if(time%2==0){
+                ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
+                msg1.setContent(message);
+                msg1.setConversationId(""+time);
+                msg1.addReceiver(receiver);
+                myAgent.send(msg1);
+            }
+            else{
+                if(counter==0){
+                    //Para simular reject_proposal
+                    ACLMessage msg2=new ACLMessage(ACLMessage.PROPOSE);
+                    msg2.setContent("");
+                    msg2.setConversationId(""+time);
+                    msg2.addReceiver(receiver);
+                    myAgent.send(msg2);
+                    counter++;
+                }
+                else if(counter==1){
+                    //Para simular not_understood
+                    ACLMessage msg3=new ACLMessage(ACLMessage.INFORM);
+                    msg3.setContent("Inform");
+                    msg3.setConversationId(""+time);
+                    msg3.addReceiver(receiver);
+                    myAgent.send(msg3);
+                    counter--;
+                }
+            }
             block(1000);
         }
     };
@@ -43,10 +74,12 @@ public class S1 extends Agent {
         public void action() {
             ACLMessage msg=receive();
             if(msg!=null){
-                if(msg.getPerformative()==0){
+                if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
                     System.out.println("Received message from "+msg.getSender()+" .Request Accepted.");
-                }else{
+                }else if(msg.getPerformative()==ACLMessage.REJECT_PROPOSAL){
                     System.out.println("Received message from "+msg.getSender()+" .Request Denied.");
+                }else{
+                    System.out.println("Received message from "+msg.getSender()+" .Request Not Understood.");
                 }
             }
             block();

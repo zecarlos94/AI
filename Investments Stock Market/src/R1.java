@@ -28,12 +28,20 @@ public class R1 extends Agent {
             if(msg != null){
                 ACLMessage response=msg.createReply();
                 if(msg.getPerformative()==ACLMessage.PROPOSE){
-                    System.out.println("Received message from "+msg.getSender()+". Conteúdo: "+ msg.getContent());
-                    response.setContent("Yes");
-                    response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                }else{
-                    System.out.println("Received message from "+msg.getSender()+". Conteúdo: "+ msg.getContent());
-                    response.setContent("No");
+                    if(msg.getContent().equals("")){
+                        System.out.println("Received message from "+msg.getSender()+". Content: "+ msg.getContent());
+                        response.setContent("Denied");
+                        response.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                    }
+                    else{
+                        System.out.println("Received message from "+msg.getSender()+". Content: "+ msg.getContent());
+                        response.setContent("Accepted");
+                        response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    }
+                }
+                else{
+                    System.out.println("Received message from "+msg.getSender()+". Content: "+ msg.getContent());
+                    response.setContent("Not Understood");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
                 }
 
