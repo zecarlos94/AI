@@ -28,9 +28,9 @@ public class SectorAgent extends Agent {
         areaFilter = new TreeMap<String,List<Empresa>>();
 
         ArrayList<Empresa> lista = new ArrayList<Empresa >();
-        lista.add(new Empresa("A"));
-        lista.add(new Empresa("B"));
-        lista.add(new Empresa("C"));
+        lista.add(new Empresa("A",0));
+        lista.add(new Empresa("B",0));
+        lista.add(new Empresa("C",0));
         areaFilter.put("Finanças",lista);
 
 
@@ -91,7 +91,7 @@ public class SectorAgent extends Agent {
                     msg1.setConversationId(""+time);
 
                     for (Empresa e: lista){
-                        msg1.setContent(e.getCompanyName()+","+e.getCompanyCapital()+","+e.getStockAvailable()+","+e.getLastStockPrice());
+                        msg1.setContent(e.toString());
                         send(msg1);
                     }
 

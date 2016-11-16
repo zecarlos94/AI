@@ -7,7 +7,7 @@ import jade.content.Concept;
 
 public class Empresa implements Concept{
     private List<String> stockExchangeName;
-    //private String stockExchangeName;
+//    private String stockExchangeName;
     private String companyName; // TODO Ajustar aqui André! Substitui nos agentes.java por este nome
     private String companyIndustry;
     private List<String>   companyOwners;
@@ -17,8 +17,41 @@ public class Empresa implements Concept{
     private int    stock; // TODO Ver o que é esta Variável
     private int    companyCapital;
 
-    public Empresa (String a){
+    public Empresa (String a,int i){
         this.companyName = a;
+    }
+    public Empresa (String a){
+        String[] empresa = a.split(";");
+        for (int i=0;i<empresa.length;i++){
+            switch (i){
+                case 0:String [] sen = empresa[i].split("#");
+                    this.stockExchangeName= new ArrayList<String>();
+                    for (String s : sen){
+                        stockExchangeName.add(s);
+                    }
+                    break;
+                case 1:String [] co = empresa[i].split("#");
+                    this.companyOwners= new ArrayList<String>();
+                    for (String s : co){
+                        companyOwners.add(s);
+                    }
+                    break;
+                case 2: this.companyName = empresa[i];
+                    break;
+                case 3: this.companyIndustry = empresa[i];
+                    break;
+                case 4: this.stockAvailable = Integer.parseInt(empresa[i]);
+                    break;
+                case 5: this.lastStockPrice = Float.parseFloat(empresa[i]);
+                    break;
+                case 6: this.year = Integer.parseInt(empresa[i]);
+                    break;
+                case 7: this.stock = Integer.parseInt(empresa[i]);
+                    break;
+                case 8: this.companyCapital = Integer.parseInt(empresa[i]);
+                    break;
+            }
+        }
     }
 
     // GETTERS
@@ -83,5 +116,31 @@ public class Empresa implements Concept{
     }
     public void setCompanyCapital(int cc){
         this.companyCapital=cc;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder a = new StringBuilder();
+        int i =0;
+        for (String s : stockExchangeName)
+            if (i==0) {
+                a.append(s);
+                i=1;
+            } else a.append("#"+s);
+        i=0;a.append(";");
+        for (String s : stockExchangeName)
+            if (i==0){
+                a.append(s);
+                i=1;
+            } else a.append("#"+s);
+        a.append(";");
+        a.append(companyName + ";");
+        a.append(companyIndustry+";");
+        a.append(stockAvailable+";");
+        a.append(lastStockPrice+";");
+        a.append(year+";");
+        a.append(stock+";");
+        a.append(companyCapital+";");
+        return a.toString();
     }
 }
