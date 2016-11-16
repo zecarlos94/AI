@@ -91,6 +91,7 @@ public class SearchAgent extends Agent {
                         }
                         System.out.println("");
                     }
+                    this.compainies.put(eElement.getAttribute("nome"),temp2);
                 }
                 System.out.print("\n\n");
 
