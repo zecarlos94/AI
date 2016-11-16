@@ -68,15 +68,6 @@ public class SectorAgent extends Agent {
 
 
 
-
-
-
-
-
-
-
-
-
     private class ReceiveBehaviourInformative extends CyclicBehaviour{
 
         @Override
@@ -94,13 +85,13 @@ public class SectorAgent extends Agent {
 
                     ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
                     AID receiver=new AID();
-                    receiver.setLocalName("analyser");
+                    receiver.setLocalName("analizador");
                     long time=System.currentTimeMillis();
                     msg1.addReceiver(receiver);
                     msg1.setConversationId(""+time);
 
                     for (Empresa e: lista){
-                        msg1.setContent(e.getNome()+","+e.getCapital()+","+e.getStockAvailable()+","+e.getStockPrice());
+                        msg1.setContent(e.getCompanyName()+","+e.getCompanyCapital()+","+e.getStockAvailable()+","+e.getLastStockPrice());
                         send(msg1);
                     }
 

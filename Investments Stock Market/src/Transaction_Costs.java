@@ -1,5 +1,3 @@
-package stockTrading.ontology;
-
 import jade.content.Predicate;
 import jade.core.AID;
 
@@ -11,12 +9,12 @@ public class Transaction_Costs implements Predicate {
 
 
     public Transaction_Costs(Empresa a){
-      this.Empresa=a;
+      this.item=a;
     }
 
     // GETTERS
     public Empresa getEmpresa() {
-      return this.empresa;
+      return this.item;
     }
     public String getTransactionItem(){
       return this.transactionItem;
@@ -30,7 +28,7 @@ public class Transaction_Costs implements Predicate {
 
     //SETTERS
     public void setEmpresa(Empresa e) {
-      this.empresa=e;
+      this.item=e;
     }
     public void setTransactionItem(String ti){
       this.transactionItem=ti;
