@@ -16,7 +16,7 @@ public class StockTradingOntology extends Ontology {
   public static final String  STOCK_COMPANY_INDUSTRY     = "stock_company_industry";
   public static final String  STOCK_COMPANY_OWNERS       = "stock_company_owners";
   public static final Integer STOCK_AVAILABLE            = 0;
-  public static final Float   STOCK_LAST_STOCK_PRICE     = "stock_company_owners";
+  public static final float   STOCK_LAST_STOCK_PRICE     = 0;
   public static final Integer STOCK_YEAR                 = 2016;
   public static final Integer STOCK_STOCK                = 0; // TODO Ver o que é esta Variável em Empresa.java
   public static final Integer STOCK_COMPANY_CAPITAL      = 0;
@@ -24,7 +24,7 @@ public class StockTradingOntology extends Ontology {
   // PREDICATE
   public static final String  TRANSACTION_COSTS          = "transaction_costs";
   public static final String  TRANSACTION_COSTS_ITEM     = "transaction_item";
-  public static final Float   TRANSACTION_COSTS_PRICE    = 0.0;
+  public static final float   TRANSACTION_COSTS_PRICE    = 0;
   public static final Integer TRANSACTION_COSTS_QUANTITY = 0;
 
   // AGENT ACTION - AGENTE LICITADOR
@@ -39,7 +39,7 @@ public class StockTradingOntology extends Ontology {
 
 
   // The singleton instance of this ontology
-  private static Ontology theInstance = new BookTradingOntology();
+  private static Ontology theInstance = new StockTradingOntology();
 
   // Retrieve the singleton StockTradingOntology
   public static Ontology getInstance() {
@@ -47,7 +47,7 @@ public class StockTradingOntology extends Ontology {
   }
 
   // Private constructor
-  private BookTradingOntology() {
+  private StockTradingOntology() {
     // The StockTradingOntology ontology extends the BasicOntology
     super(ONTOLOGY_NAME, BasicOntology.getInstance(), new CFReflectiveIntrospector());
     try {
