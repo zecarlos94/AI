@@ -8,18 +8,40 @@ import jade.content.Concept;
 public class Empresa implements Concept{
     private List<String> stockExchangeName;
 //    private String stockExchangeName;
+    private String companyExchangeNname;
     private String companyName; // TODO Ajustar aqui André! Substitui nos agentes.java por este nome
     private String companyIndustry;
     private List<String>   companyOwners;
     private int    stockAvailable;
     private float  lastStockPrice;
+    private String currency;
     private int    year;
-    private int    stock; // TODO Ver o que é esta Variável
+    private double    stock; // TODO Ver o que é esta Variável
     private int    companyCapital;
 
     public Empresa (String a,int i){
         this.companyName = a;
     }
+    public Empresa (String nome, String industria, String owners, double st,String c, int y,String SEN,String cen){
+        this.companyName=nome;
+        this.companyIndustry=industria;
+        String [] own = owners.split(";");
+        this.companyOwners= new ArrayList<String>();
+        for (String s : own){
+            companyOwners.add(s);
+        }
+        this.stock = st;
+        this.currency = c;
+        this.year = y;
+
+        String [] sen = SEN.split(";");
+        this.stockExchangeName= new ArrayList<String>();
+        for (String s1 : sen){
+            stockExchangeName.add(s1);
+        }
+        this.companyExchangeNname = cen;
+    }
+
     public Empresa (String a){
         String[] empresa = a.split(";");
         for (int i=0;i<empresa.length;i++){
@@ -44,11 +66,13 @@ public class Empresa implements Concept{
                     break;
                 case 5: this.lastStockPrice = Float.parseFloat(empresa[i]);
                     break;
-                case 6: this.year = Integer.parseInt(empresa[i]);
+                case 6: this.currency= empresa[i];
                     break;
-                case 7: this.stock = Integer.parseInt(empresa[i]);
+                case 7: this.year = Integer.parseInt(empresa[i]);
                     break;
-                case 8: this.companyCapital = Integer.parseInt(empresa[i]);
+                case 8: this.stock = Integer.parseInt(empresa[i]);
+                    break;
+                case 9: this.companyCapital = Integer.parseInt(empresa[i]);
                     break;
             }
         }
@@ -80,9 +104,10 @@ public class Empresa implements Concept{
     public int getYear(){
         return this.year;
     }
-    public int getStock(){
+    public double getStock(){
         return this.stock;
     }
+    public String getCurrency (){ return this.currency;}
     public int getCompanyCapital(){
         return this.companyCapital;
     }
@@ -114,6 +139,7 @@ public class Empresa implements Concept{
     public void setStock(int s){
         this.stock=s;
     }
+    public void setCurrency(String s) {this.currency=s;}
     public void setCompanyCapital(int cc){
         this.companyCapital=cc;
     }
@@ -138,6 +164,7 @@ public class Empresa implements Concept{
         a.append(companyIndustry+";");
         a.append(stockAvailable+";");
         a.append(lastStockPrice+";");
+        a.append(currency+";");
         a.append(year+";");
         a.append(stock+";");
         a.append(companyCapital+";");

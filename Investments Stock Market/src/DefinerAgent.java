@@ -31,7 +31,8 @@ public class DefinerAgent extends GuiAgent{
 
     @Override
     protected void setup() {
-
+        super.setup();
+        System.out.println(this.getLocalName()+ " starting!");
 
 
         myGui=new DefinerGui(this);
