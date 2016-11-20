@@ -61,6 +61,8 @@ public class BidderAgent extends Agent {
                   System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                   //parse do content da mensagem
                   System.out.println("Bid");
+                  response.setContent("Yes");
+                  response.setPerformative(ACLMessage.INFORM);
               }
               else{
                   System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
