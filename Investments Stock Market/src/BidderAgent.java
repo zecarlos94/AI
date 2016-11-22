@@ -57,12 +57,12 @@ public class BidderAgent extends Agent {
           ACLMessage msg = receive();
           if(msg != null){
               ACLMessage response=msg.createReply();
-              if(msg.getPerformative()==ACLMessage.INFORM) {
+              if(msg.getPerformative()==ACLMessage.REQUEST) {
                   System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                   //parse do content da mensagem
                   System.out.println("Bid");
                   response.setContent("Yes");
-                  response.setPerformative(ACLMessage.INFORM);
+                  response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
               }
               else{
                   System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
