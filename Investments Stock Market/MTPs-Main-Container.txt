@@ -1,1 +1,1 @@
-http://10.0.0.22:7778/acc
+http://rui-pc-laptop-kde:7778/acc
