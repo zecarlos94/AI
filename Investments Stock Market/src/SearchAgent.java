@@ -126,6 +126,8 @@ public class SearchAgent extends Agent {
                 List<Empresa> empl = empli.getValue();
               for (Empresa emp: empl) {
                 //get data from yahoo
+                  if (emp.getCompanyExchangeNname()!=null) {
+                  System.out.println("WELELE"+emp.getCompanyExchangeNname());
                 Empresa search = Search.getCompanyData(emp.getCompanyExchangeNname());
                 emp.update(search);
                   //emp = search.clone();
@@ -134,7 +136,8 @@ public class SearchAgent extends Agent {
                 msg.setContent(emp.toString());
                 msg.setConversationId(""+id);
                 msg.addReceiver(receiver);
-                send(msg);
+                send(msg); }
+                  System.out.println("eheh");
               }
             }
         }

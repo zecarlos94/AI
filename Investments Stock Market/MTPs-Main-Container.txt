@@ -1,1 +1,1 @@
-http://rui-pc-laptop-kde:7778/acc
+http://mbp-de-mario.lan:7778/acc
