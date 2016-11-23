@@ -6,7 +6,7 @@ import java.util.List;
  * Created by marioferreira on 23/11/16.
  */
 
-public class Empresa implements Concept {
+public class Company implements Concept {
 
     private List<String>   companyOwners;
     private double stock;
@@ -98,31 +98,11 @@ public class Empresa implements Concept {
 
     // Construtores
 
-    public Empresa(String symbol, int a) {
+    public Company (String symbol, int a) {
         this.symbol = symbol;
     }
 
-    public Empresa(String industria, String owners, double st, int y, String SEN, String cen){
-        this.companyIndustry=industria;
-        String [] own = owners.split(";");
-        this.companyOwners= new ArrayList<String>();
-        int i = 0;
-        for (String s : own){
-            companyOwners.add(s);
-        }
-
-        this.stock = st;
-        this.year = y;
-
-        String [] sen = SEN.split(";");
-        this.stockExchangeName= new ArrayList<String>();
-        for (String s1 : sen){
-            stockExchangeName.add(s1);
-        }
-        this.companyExchangeNname = cen;
-    }
-
-    public Empresa(String a) {
+    public Company (String a) {
         String[] empresa = a.split("#");
         for (int i=0;i<empresa.length;i++){
             switch (i){
@@ -891,8 +871,7 @@ public class Empresa implements Concept {
                 a.append(s);
                 i=1;
             } else a.append(";"+s);
-        i = companyOwners.size();
-        a.append("#");
+        i=0;a.append("#");
         for (String s : companyOwners)
             if (i==0){
                 a.append(s);
@@ -909,98 +888,5 @@ public class Empresa implements Concept {
         a.append(str);
         return a.toString();
     }
-
-    public void update(Empresa a) {
-        stock = a.getStock();
-        companyCapital = a.getCompanyCapital();
-        year = a.getYear();
-        stockExchangeName = a.getStockExchangeName();
-        companyExchangeNname = a.getCompanyExchangeNname();
-        companyIndustry = a.getCompanyIndustry();
-        stockAvailable = a.getStockAvailable();
-        askRT = a.getAskRT();
-        bidRT = a.getBidRT();
-        previousOpen = a.getPreviousOpen(); // p
-        open = a.getPreviousOpen(); // o
-        // Dividends
-        dividendPerShare = a.getDividendPerShare(); // d
-        // Date
-        change = a.getChange(); // c1
-        changeRT = a.getChangeRT(); // c6
-        changePercentRT = a.getChangePercentRT(); // k2
-        changeInPercent = a.getChangeInPercent(); // p2
-        lastTradeDate = a.getLastTradeDate(); // d1
-        tradeDate = a.getTradeDate(); // d2
-        lastTradeTime = a.getLastTradeTime(); // t1
-        // Averages
-        afterHoursChangeRT = a.getAfterHoursChangeRT(); // c8
-        comission = a.getComission(); // c3
-        dayLow = a.getDayLow(); // g
-        dayHigh = a.getDayHigh(); // h
-        lastTradeRTwTime = a.getLastTradeRTwTime(); // k1
-        lastTradewTime = a.getLastTradewTime(); // l
-        percentChange200 = a.getPercentChange200(); // m6
-        percentChange50 = a.getPercentChange50(); // m8
-        // Misc
-        dayValueChange = a.getDayValueChange(); // w1
-        dayValueChangeRT = a.getDayValueChangeRT(); // w4
-        pricePaid = a.getPricePaid(); // p1
-        //dayRange; // m DELETED (dá dayLow e dayHigh)
-        //dayRangeRT; // m2 DELETED (dá dayLowRT e dayHighRT)
-        holdingGainPercent = a.getHoldingGainPercent(); // g1
-        annualizedGain = a.getAnnualizedGain(); // g3
-        holdingGainPercentRT = a.getHoldingGainPercentRT(); // g5
-        tickerTrend = a.getTickerTrend(); // t7
-        orderBookRT = a.getOrderBookRT(); // i5
-        highLimit = a.getHighLimit(); // l2
-        lowLimit = a.getLowLimit(); // l3
-        holdingsValue = a.getHoldingsValue(); // v1
-        holdingValueRT = a.getHoldingValueRT(); // v7
-        revenue = a.getRevenue(); // s6
-        // Week Pricing
-        weekHigh = a.getWeekHigh(); // k
-        weekLow = a.getWeekLow(); // j
-        percentChange52low = a.getPercentChange52low(); // j6
-        percentChange52high = a.getPercentChange52high(); // k5
-        // weekRange; // w DELETED
-        // Symbol info
-        currency = a.getCurrency(); // c4
-        marketCap = a.getMarketCap(); // j1
-        marketCapRT = a.getMarketCapRT() ; // j3
-        name= a.getName(); // n
-        notes = a.getNotes(); // n4
-        symbol = a.getSymbol(); // s
-        sharesOwned = a.getSharesOwned(); // s1
-        stockExchange = a.getStockExchange(); // x
-        sharesOutsta = a.getSharesOutsta(); // j2
-        // Volume
-        volume = a.getVolume(); // v
-        askSize = a.getAskSize(); // a5
-        bidSize = a.getBidSize(); // b6
-        lastTradeSize = a.getLastTradeSize(); // k3
-        averageDailyVolume = a.getAverageDailyVolume(); // a2
-        // Ratios
-        earningsPerShare = a.getEarningsPerShare(); // e
-        epsEstimCurYear = a.getEpsEstimCurYear(); // e7
-        epsEstimNextYear = a.getEpsEstimNextYear(); // e8
-        epsEstimNextQuarter = a.getEpsEstimNextQuarter(); // e9
-        bookBalue = a.getBookBalue(); //b4
-        ebitda = a.getEbitda(); // j4
-        priceSales = a.getPriceSales(); // p5
-        priceBook = a.getPriceBook(); // p6
-        peRatio = a.getPeRatio(); // r
-        peRatioRT = a.getPeRatioRT(); // r2
-        pegRatio = a.getPegRatio(); // r5
-        priceEpsEstCurYear = a.getPriceEpsEstCurYear(); // r6
-        priceEpsEstNextYear = a.getPriceEpsEstNextYear(); // r7
-        shortRatio = a.getShortRatio(); // s7
-    }
-
-    /*@Override
-    public Empresa clone(){
-        Empres res = new Empresa();
-        res = this.ask;
-
-    }*/
 
 }

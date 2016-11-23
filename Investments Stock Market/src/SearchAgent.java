@@ -1,3 +1,4 @@
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
@@ -5,6 +6,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
+import jade.lang.acl.ACLMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,7 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-
+import java.util.Map;
 /**
  * Created by zecarlos on 10/11/16.
  */
@@ -66,6 +68,7 @@ public class SearchAgent extends Agent {
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                     Element eElement = (Element) nNode;
+                    String area = eElement.getAttribute("nome");
 
                     System.out.println("Area : " + eElement.getAttribute("nome"));
                     ArrayList<Empresa> temp2 = new ArrayList<Empresa>();
@@ -79,15 +82,13 @@ public class SearchAgent extends Agent {
 
                         if (nNode1.getNodeType() == Node.ELEMENT_NODE) {
                             Element eElement1 = (Element) nNode1;
-                            System.out.println("Companny Name : " + eElement1.getAttribute("nome"));
                             System.out.println("Owners : " + eElement1.getAttribute("owners"));
                             System.out.println("Stock : " + eElement1.getAttribute("stock"));
-                            System.out.println("Currency : " + eElement1.getAttribute("currency"));
                             System.out.println("Year : " + eElement1.getAttribute("year"));
                             System.out.println("Stock Exchange Name : " + eElement1.getAttribute("sen"));
                             System.out.println("Company Exchange Name : " + eElement1.getAttribute("cen"));
 
-                            temp2.add(new Empresa(eElement1.getAttribute("nome"),eElement.getAttribute("nome"),eElement1.getAttribute("owners"),Double.parseDouble(eElement1.getAttribute("stock")),eElement1.getAttribute("currency"),Integer.parseInt(eElement1.getAttribute("year")),eElement1.getAttribute("sen"),eElement1.getAttribute("cen")));
+                            temp2.add(new Empresa(area,eElement1.getAttribute("owners"),Double.parseDouble(eElement1.getAttribute("stock")),Integer.parseInt(eElement1.getAttribute("year")),eElement1.getAttribute("sen"),eElement1.getAttribute("cen")));
                         }
                         System.out.println("");
                     }
@@ -115,10 +116,27 @@ public class SearchAgent extends Agent {
     }
 
 
-    public class SearchBehaviour extends CyclicBehaviour{
+    private class SearchBehaviour extends CyclicBehaviour{
         @Override
         public void action(){
             // TODO colocar código de procura no stock market
+            AID receiver = new AID();
+            receiver.setLocalName("SectorAgent");
+            for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
+                List<Empresa> empl = empli.getValue();
+              for (Empresa emp: empl) {
+                //get data from yahoo
+                Empresa search = Search.getCompanyData(emp.getCompanyExchangeNname());
+                emp.update(search);
+                  //emp = search.clone();
+                long id = System.currentTimeMillis();
+                ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                msg.setContent(emp.toString());
+                msg.setConversationId(""+id);
+                msg.addReceiver(receiver);
+                send(msg);
+              }
+            }
         }
     };
 
