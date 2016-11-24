@@ -10,6 +10,8 @@ import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -156,27 +158,31 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(counterAgentsClicks>=2){
+            String nameNewAgent="definidor";
+            // get a JADE runtime
+            Runtime rt = Runtime.instance();
+            // create a default profile
+            Profile p = new ProfileImpl();
+            // create the Main-container
+            ContainerController mainContainer = rt.createAgentContainer(p);
 
-        String nameNewAgent="definidor";
-        // get a JADE runtime
-        Runtime rt = Runtime.instance();
-        // create a default profile
-        Profile p = new ProfileImpl();
-        // create the Main-container
-        ContainerController mainContainer = rt.createAgentContainer(p);
 
+            // create 1 DefinerAgent
+            try {
 
-        // create 1 DefinerAgent
-        try {
+                String[] argss = {};
+                AgentController ac =
+                        mainContainer.createNewAgent(nameNewAgent+counterDefinerClicks, "DefinerAgent",argss);
+                counterDefinerClicks++;
+                ac.start();
 
-            String[] argss = {};
-            AgentController ac =
-                    mainContainer.createNewAgent(nameNewAgent+counterDefinerClicks, "DefinerAgent",argss);
-            counterDefinerClicks++;
-            ac.start();
-
-        } catch (jade.wrapper.StaleProxyException e) {
-            System.err.println("Error launching agent...");
+            } catch (jade.wrapper.StaleProxyException e) {
+                System.err.println("Error launching agent...");
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this,"Must initialize all agents first!! Click on 'Initialize All Agents'");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
