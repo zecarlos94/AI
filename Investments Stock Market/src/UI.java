@@ -135,17 +135,8 @@ public class UI extends javax.swing.JFrame {
             agents.add(ac2);
 
             AgentController ac3 =
-                    mainContainer.createNewAgent("licitador"+counterAgentsClicks, "BidderAgent",argss);
+                    mainContainer.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
             agents.add(ac3);
-
-            //Para já dá exceção pk ainda não foi implementado o agente Seller!!! TODO
-            AgentController ac4 =
-                    mainContainer.createNewAgent("vendedor"+counterAgentsClicks, "SellerAgent",argss);
-            agents.add(ac4);
-
-//            AgentController ac5 =
-//                    mainContainer.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
-//            agents.add(ac5);
 
 
             counterAgentsClicks++;
