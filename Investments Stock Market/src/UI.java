@@ -17,7 +17,8 @@ import java.util.ArrayList;
  * @author zecarlos
  */
 public class UI extends javax.swing.JFrame {
-
+    int counterDefinerClicks=1;
+    int counterAgentsClicks=1;
     /**
      * Creates new form NewJFrame
      */
@@ -110,17 +111,8 @@ public class UI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
-
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         ArrayList<AgentController> agents = new ArrayList<>();
         // get a JADE runtime
         Runtime rt = Runtime.instance();
@@ -130,20 +122,67 @@ public class UI extends javax.swing.JFrame {
         ContainerController mainContainer = rt.createAgentContainer(p);
 
 
-        // create 2 DefinerAgents
+        // create all agents but Analyzer
+        try {
+
+            String[] argss = {};
+            AgentController ac1 =
+                    mainContainer.createNewAgent("procura"+counterAgentsClicks, "SearchAgent",argss);
+            agents.add(ac1);
+
+            AgentController ac2 =
+                    mainContainer.createNewAgent("sector"+counterAgentsClicks, "SectorAgent",argss);
+            agents.add(ac2);
+
+            AgentController ac3 =
+                    mainContainer.createNewAgent("licitador"+counterAgentsClicks, "BidderAgent",argss);
+            agents.add(ac3);
+
+            //Para já dá exceção pk ainda não foi implementado o agente Seller!!! TODO
+            AgentController ac4 =
+                    mainContainer.createNewAgent("vendedor"+counterAgentsClicks, "SellerAgent",argss);
+            agents.add(ac4);
+
+//            AgentController ac5 =
+//                    mainContainer.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
+//            agents.add(ac5);
+
+
+            counterAgentsClicks++;
+            for(int i=0;i<agents.size();i++){
+                agents.get(i).start();
+            }
+
+        } catch (jade.wrapper.StaleProxyException e) {
+            System.err.println("Error launching agent...");
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        String nameNewAgent="definidor";
+        // get a JADE runtime
+        Runtime rt = Runtime.instance();
+        // create a default profile
+        Profile p = new ProfileImpl();
+        // create the Main-container
+        ContainerController mainContainer = rt.createAgentContainer(p);
+
+
+        // create 1 DefinerAgent
         try {
 
             String[] argss = {};
             AgentController ac =
-                    mainContainer.createNewAgent("definidor", "DefinerAgent",argss);
-            agents.add(ac);
-            AgentController ac2 =
-                    mainContainer.createNewAgent("definidor2", "DefinerAgent",argss);
-            agents.add(ac2);
-            // start the 2 agent2
-            for(int i=0;i<agents.size();i++){
-                agents.get(i).start();
-            }
+                    mainContainer.createNewAgent(nameNewAgent+counterDefinerClicks, "DefinerAgent",argss);
+            counterDefinerClicks++;
+            ac.start();
 
         } catch (jade.wrapper.StaleProxyException e) {
             System.err.println("Error launching agent...");
