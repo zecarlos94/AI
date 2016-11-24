@@ -119,9 +119,13 @@ public class UI extends javax.swing.JFrame {
         // get a JADE runtime
         Runtime rt = Runtime.instance();
         // create a default profile
-        Profile p = new ProfileImpl();
+        Profile p1 = new ProfileImpl();
+        Profile p2 = new ProfileImpl();
+        Profile p3 = new ProfileImpl();
         // create the Main-container
-        ContainerController mainContainer = rt.createAgentContainer(p);
+        ContainerController mainContainer1 = rt.createAgentContainer(p1);
+        ContainerController mainContainer2 = rt.createAgentContainer(p2);
+        ContainerController mainContainer3 = rt.createAgentContainer(p3);
 
 
         // create all agents but Analyzer
@@ -129,15 +133,15 @@ public class UI extends javax.swing.JFrame {
 
             String[] argss = {};
             AgentController ac1 =
-                    mainContainer.createNewAgent("procura"+counterAgentsClicks, "SearchAgent",argss);
+                    mainContainer1.createNewAgent("procura"+counterAgentsClicks, "SearchAgent",argss);
             agents.add(ac1);
 
             AgentController ac2 =
-                    mainContainer.createNewAgent("sector"+counterAgentsClicks, "SectorAgent",argss);
+                    mainContainer2.createNewAgent("sector"+counterAgentsClicks, "SectorAgent",argss);
             agents.add(ac2);
 
             AgentController ac3 =
-                    mainContainer.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
+                    mainContainer3.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
             agents.add(ac3);
 
 
