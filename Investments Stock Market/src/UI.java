@@ -132,16 +132,16 @@ public class UI extends javax.swing.JFrame {
         try {
 
             String[] argss = {};
-            AgentController ac1 =
-                    mainContainer1.createNewAgent("procura"+counterAgentsClicks, "SearchAgent",argss);
-            agents.add(ac1);
+//            AgentController ac1 =
+//                    mainContainer1.createNewAgent("procura", "SearchAgent",argss);
+//            agents.add(ac1);
 
             AgentController ac2 =
-                    mainContainer2.createNewAgent("sector"+counterAgentsClicks, "SectorAgent",argss);
+                    mainContainer2.createNewAgent("sector", "SectorAgent",argss);
             agents.add(ac2);
 
             AgentController ac3 =
-                    mainContainer3.createNewAgent("analisador"+counterAgentsClicks, "AnalyzerAgent",argss);
+                    mainContainer3.createNewAgent("analisador", "AnalyzerAgent",argss);
             agents.add(ac3);
 
 

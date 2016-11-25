@@ -27,7 +27,7 @@ public class SectorAgent extends Agent {
 
         areaFilter = new TreeMap<String,List<Empresa>>();
 
-        ArrayList<Empresa> lista = new ArrayList<Empresa >();
+        ArrayList<Empresa> lista = new ArrayList<Empresa>();
         lista.add(new Empresa("A",0));
         lista.add(new Empresa("B",0));
         lista.add(new Empresa("C",0));
@@ -89,11 +89,12 @@ public class SectorAgent extends Agent {
                     long time=System.currentTimeMillis();
                     msg1.addReceiver(receiver);
                     msg1.setConversationId(""+time);
-
-                    for (Empresa e: lista){
-                        msg1.setContent(e.toString());
-                        send(msg1);
-                    }
+                    if(lista != null)
+                    if(lista.isEmpty())
+                        for (Empresa e: lista){
+                            msg1.setContent(e.toString());
+                            send(msg1);
+                        }
 
 
                 }
