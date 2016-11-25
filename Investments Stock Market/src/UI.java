@@ -70,7 +70,7 @@ public class UI extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 145, 163));
         jLabel1.setText("Stock Exchange Market");
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("rsz_stock-exchange-icon-png-1.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("img/rsz_stock-exchange-icon-png-1.png"))); // NOI18N
         jLabel2.setMaximumSize(new java.awt.Dimension(2721, 2672));
         jLabel2.setMinimumSize(new java.awt.Dimension(2721, 2672));
 
