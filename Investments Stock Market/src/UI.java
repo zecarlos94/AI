@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class UI extends javax.swing.JFrame {
     int counterDefinerClicks=1;
     int counterAgentsClicks=1;
+    int init = 0;
     /**
      * Creates new form NewJFrame
      */
@@ -114,7 +115,7 @@ public class UI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
+        if (init == 0){
         ArrayList<AgentController> agents = new ArrayList<>();
         // get a JADE runtime
         Runtime rt = Runtime.instance();
@@ -132,9 +133,9 @@ public class UI extends javax.swing.JFrame {
         try {
 
             String[] argss = {};
-//            AgentController ac1 =
-//                    mainContainer1.createNewAgent("procura", "SearchAgent",argss);
-//            agents.add(ac1);
+            AgentController ac1 =
+                    mainContainer1.createNewAgent("procura", "SearchAgent",argss);
+            agents.add(ac1);
 
             AgentController ac2 =
                     mainContainer2.createNewAgent("sector", "SectorAgent",argss);
@@ -144,15 +145,14 @@ public class UI extends javax.swing.JFrame {
                     mainContainer3.createNewAgent("analisador", "AnalyzerAgent",argss);
             agents.add(ac3);
 
-
-            counterAgentsClicks++;
             for(int i=0;i<agents.size();i++){
                 agents.get(i).start();
             }
-
+            init = 1;
         } catch (jade.wrapper.StaleProxyException e) {
             System.err.println("Error launching agent...");
         }
+        }else  JOptionPane.showMessageDialog(this,"All agents already initialized!");
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -162,7 +162,7 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(counterAgentsClicks>=2){
+        if(init==1){
             String nameNewAgent="definidor";
             // get a JADE runtime
             Runtime rt = Runtime.instance();
