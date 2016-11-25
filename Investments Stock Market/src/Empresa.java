@@ -911,11 +911,7 @@ public class Empresa implements Concept {
     }
 
     public void update(Empresa a) {
-        stock = a.getStock();
         companyCapital = a.getCompanyCapital();
-        year = a.getYear();
-        stockExchangeName = a.getStockExchangeName();
-        companyExchangeNname = a.getCompanyExchangeNname();
         companyIndustry = a.getCompanyIndustry();
         stockAvailable = a.getStockAvailable();
         askRT = a.getAskRT();

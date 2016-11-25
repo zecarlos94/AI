@@ -80,32 +80,33 @@ public class SectorAgent extends Agent {
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 }else if(msg.getPerformative()==ACLMessage.INFORM){
-                    System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
-                    List<Empresa> lista = areaFilter.get(msg.getContent());
-
-                    ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
-                    AID receiver=new AID();
-                    receiver.setLocalName("analizador");
-                    long time=System.currentTimeMillis();
-                    msg1.addReceiver(receiver);
-                    msg1.setConversationId(""+time);
-                    if(lista != null)
-                    if(lista.isEmpty())
-                        for (Empresa e: lista){
-                            msg1.setContent(e.toString());
-                            send(msg1);
-                        }
-
-
+                    if(msg.getSender().getName()=="search"){
+                        System.out.println("Message received from"+msg.getSender()+" the company is " + new Empresa(msg.getContent()).toString());
+                    }
+                    else {
+                        System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                        List<Empresa> lista = areaFilter.get(msg.getContent());
+                        ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
+                        AID receiver = new AID();
+                        receiver.setLocalName("analizador");
+                        long time = System.currentTimeMillis();
+                        msg1.addReceiver(receiver);
+                        msg1.setConversationId("" + time);
+                        if (lista != null)
+                            if (lista.isEmpty())
+                                for (Empresa e : lista) {
+                                    msg1.setContent(e.toString());
+                                    send(msg1);
+                                }
+                    }
                 }
                 else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
                 }
-
+                System.out.println("" + response.getAllIntendedReceiver());
                 send(response);
-
             }
             block();
         }

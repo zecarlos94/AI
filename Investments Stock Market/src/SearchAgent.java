@@ -5,7 +5,6 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
-
 import jade.lang.acl.ACLMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,8 +16,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.Map;
+import java.util.TreeMap;
 /**
  * Created by zecarlos on 10/11/16.
  */
@@ -120,25 +119,39 @@ public class SearchAgent extends Agent {
         @Override
         public void action(){
             // TODO colocar código de procura no stock market
+            ACLMessage msg = receive();
             AID receiver = new AID();
-            receiver.setLocalName("SectorAgent");
-            for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
-                List<Empresa> empl = empli.getValue();
-              for (Empresa emp: empl) {
-                //get data from yahoo
-                  if (emp.getCompanyExchangeNname()!=null) {
-                  System.out.println("WELELE"+emp.getCompanyExchangeNname());
-                Empresa search = Search.getCompanyData(emp.getCompanyExchangeNname());
-                emp.update(search);
-                  //emp = search.clone();
-                long id = System.currentTimeMillis();
-                ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                msg.setContent(emp.toString());
-                msg.setConversationId(""+id);
+            receiver.setLocalName("sector");
+            if(msg!=null)
+                if (msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
+                    for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
+                        List<Empresa> empl = empli.getValue();
+                        for (Empresa emp : empl) {
+                            //get data from yahoo
+                            if (emp.getCompanyExchangeNname() != null) {
+                                System.out.println("YOLO");
+                                Empresa search = Search.getCompanyData(emp.getCompanyExchangeNname());
+                                emp.update(search);
+                                long id = System.currentTimeMillis();
+                                msg = new ACLMessage(ACLMessage.INFORM);
+                                msg.setContent(emp.toString());
+                                msg.setConversationId("" + id);
+                                msg.addReceiver(receiver);
+                                send(msg);
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
+                    msg.setContent("No");
+                    msg.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+                    send(msg);
+                }
+            else {
+                msg = new ACLMessage(ACLMessage.PROPOSE);
+                msg.setContent("Will you?");
                 msg.addReceiver(receiver);
-                send(msg); }
-                  System.out.println("eheh");
-              }
+                send(msg);
             }
         }
     };
