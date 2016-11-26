@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
@@ -17,7 +18,7 @@ import java.util.TreeMap;
 public class AnalyzerAgent extends Agent{
 
 
-    private HashSet<Empresa> companies = new HashSet<Empresa>();
+    private HashMap<String,Empresa> companies = new HashMap<String,Empresa>();
 
 
     @Override
@@ -65,7 +66,9 @@ public class AnalyzerAgent extends Agent{
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 }else if(msg.getPerformative()==ACLMessage.INFORM) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
-                    companies.add(new Empresa(msg.getContent()));
+                    Empresa e = new Empresa(msg.getContent());
+                    if(companies.get(e.getCompanyExchangeName())!=null) companies.remove(e.getCompanyExchangeName());
+                    companies.put(e.getCompanyExchangeName(),e);
                 }
                 else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());

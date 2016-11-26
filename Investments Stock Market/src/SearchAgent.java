@@ -121,38 +121,30 @@ public class SearchAgent extends Agent {
             // TODO colocar código de procura no stock market
             ACLMessage msg = receive();
             AID receiver = new AID();
-            receiver.setLocalName("sector");
+            receiver.setLocalName("SectorAgent");
             if(msg!=null)
                 if (msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
                     for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
                         List<Empresa> empl = empli.getValue();
                         for (Empresa emp : empl) {
                             //get data from yahoo
-                            if (emp.getCompanyExchangeNname() != null) {
+                            if (emp.getCompanyExchangeName() != null) {
                                 System.out.println("YOLO");
-                                Empresa search = Search.getCompanyData(emp.getCompanyExchangeNname());
+                                Empresa search = Search.getCompanyData(emp.getCompanyExchangeName());
                                 emp.update(search);
                                 long id = System.currentTimeMillis();
                                 msg = new ACLMessage(ACLMessage.INFORM);
-                                msg.setContent(emp.toString());
+                                msg.setContent(empli.getKey()+"_"+emp.toString());
                                 msg.setConversationId("" + id);
                                 msg.addReceiver(receiver);
                                 send(msg);
                             }
                         }
                     }
-                } else {
-                    System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
-                    msg.setContent("No");
-                    msg.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-                    send(msg);
+                    System.out.println("Procura concluída");
                 }
-            else {
-                msg = new ACLMessage(ACLMessage.PROPOSE);
-                msg.setContent("Will you?");
-                msg.addReceiver(receiver);
-                send(msg);
-            }
+
+            block(2000);
         }
     };
 

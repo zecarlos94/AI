@@ -335,7 +335,7 @@ public class DefinerAgent extends Agent{
             AID receiver=new AID();
             // o receiver será o agente sector
             // TODO dar o nome sector ao SectorAgent
-            receiver.setLocalName("sector");
+            receiver.setLocalName("SectorAgent");
             long time=System.currentTimeMillis();
             ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
             msg.setContent("Está disponivel?");

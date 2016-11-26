@@ -829,7 +829,7 @@ public class Empresa implements Concept {
     }
 
     // GETTERS
-    public String getCompanyExchangeNname() { return this.companyExchangeNname; }
+    public String getCompanyExchangeName() { return this.companyExchangeNname; }
     public List<String> getStockExchangeName(){
         return this.stockExchangeName;
     }

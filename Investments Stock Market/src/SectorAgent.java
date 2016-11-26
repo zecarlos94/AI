@@ -8,16 +8,14 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by zecarlos on 10/11/16.
  */
 public class SectorAgent extends Agent {
 
-    public TreeMap<String,List<Empresa>> areaFilter;
+    public HashMap<String,HashMap<String,Empresa>> areaFilter;
 
 
 
@@ -25,13 +23,9 @@ public class SectorAgent extends Agent {
     protected void setup(){
         super.setup();
 
-        areaFilter = new TreeMap<String,List<Empresa>>();
+        areaFilter = new HashMap<String,HashMap<String,Empresa>>();
 
         ArrayList<Empresa> lista = new ArrayList<Empresa>();
-        lista.add(new Empresa("A",0));
-        lista.add(new Empresa("B",0));
-        lista.add(new Empresa("C",0));
-        areaFilter.put("Finanças",lista);
 
 
 
@@ -80,12 +74,30 @@ public class SectorAgent extends Agent {
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 }else if(msg.getPerformative()==ACLMessage.INFORM){
-                    if(msg.getSender().getName()=="search"){
-                        System.out.println("Message received from"+msg.getSender()+" the company is " + new Empresa(msg.getContent()).toString());
+                    if(msg.getSender().getName()=="SearchAgent"){
+                        String[] a = msg.getContent().split("_");
+                        System.out.println("Message received from"+msg.getSender()+" the company is " + new Empresa(a[1]));
+                        HashMap<String,Empresa> lista = areaFilter.get(a[0]);
+                        if(lista==null){
+                            Empresa temp = new Empresa(a[1].toString());
+                            lista = new HashMap<String,Empresa>();
+                            lista.put(temp.getCompanyExchangeName(),temp);
+                            areaFilter.put(a[0],lista);
+                        }
+                        else{
+
+                            Empresa temp = new Empresa(a[1].toString());
+                            lista.remove(temp.getCompanyExchangeName());
+                            lista.put(temp.getCompanyExchangeName(),temp);
+                            areaFilter.remove(a[0]);
+                            areaFilter.put(a[0],lista);
+                        }
+
                     }
-                    else {
+                    if(msg.getSender().equals("DefinerAgent")) {
                         System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
-                        List<Empresa> lista = areaFilter.get(msg.getContent());
+                        HashMap<String,Empresa> lista = areaFilter.get(msg.getContent());
+
                         ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
                         AID receiver = new AID();
                         receiver.setLocalName("analizador");
@@ -94,8 +106,8 @@ public class SectorAgent extends Agent {
                         msg1.setConversationId("" + time);
                         if (lista != null)
                             if (lista.isEmpty())
-                                for (Empresa e : lista) {
-                                    msg1.setContent(e.toString());
+                                for (Map.Entry<String,Empresa> e : lista.entrySet()) {
+                                    msg1.setContent(e.getValue().toString());
                                     send(msg1);
                                 }
                     }
