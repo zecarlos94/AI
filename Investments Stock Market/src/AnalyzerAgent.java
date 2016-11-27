@@ -31,8 +31,8 @@ public class AnalyzerAgent extends Agent{
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setType("AnalyserAgent");
-        sd.setName("AnalyserAgent");
+        sd.setType("AnalyzerAgent");
+        sd.setName("AnalyzerAgent");
         dfd.addServices(sd);
         try{
             DFService.register(this,dfd);

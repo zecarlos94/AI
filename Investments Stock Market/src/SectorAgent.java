@@ -16,7 +16,7 @@ import java.util.*;
 public class SectorAgent extends Agent {
 
     public HashMap<String,HashMap<String,Empresa>> areaFilter;
-
+    public String area;
 
 
     @Override
@@ -45,6 +45,7 @@ public class SectorAgent extends Agent {
         }
 
         this.addBehaviour(new ReceiveBehaviourInformative());
+        this.addBehaviour(new SenderBehaviour());
     }
 
 
@@ -61,7 +62,28 @@ public class SectorAgent extends Agent {
     }
 
 
+    private class SenderBehaviour extends CyclicBehaviour{
+        @Override
+        public void action(){
+            block(25000);
+            if(!areaFilter.isEmpty()) {
+                HashMap<String, Empresa> lista = areaFilter.get(area);
 
+                ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
+                AID receiver = new AID();
+                receiver.setLocalName("AnalyzerAgent");
+                long time = System.currentTimeMillis();
+                msg1.addReceiver(receiver);
+                msg1.setConversationId("" + time);
+                if (lista != null)
+                    if (lista.isEmpty())
+                        for (Map.Entry<String, Empresa> e : lista.entrySet()) {
+                            msg1.setContent(e.getValue().toString());
+                            send(msg1);
+                        }
+            }
+        }
+    };
     private class ReceiveBehaviourInformative extends CyclicBehaviour{
 
         @Override
@@ -96,20 +118,7 @@ public class SectorAgent extends Agent {
                     }
                     if(msg.getSender().equals("DefinerAgent")) {
                         System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
-                        HashMap<String,Empresa> lista = areaFilter.get(msg.getContent());
-
-                        ACLMessage msg1 = new ACLMessage(ACLMessage.INFORM);
-                        AID receiver = new AID();
-                        receiver.setLocalName("analizador");
-                        long time = System.currentTimeMillis();
-                        msg1.addReceiver(receiver);
-                        msg1.setConversationId("" + time);
-                        if (lista != null)
-                            if (lista.isEmpty())
-                                for (Map.Entry<String,Empresa> e : lista.entrySet()) {
-                                    msg1.setContent(e.getValue().toString());
-                                    send(msg1);
-                                }
+                        area = msg.getContent();
                     }
                 }
                 else{
