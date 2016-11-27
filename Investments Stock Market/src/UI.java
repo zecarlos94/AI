@@ -142,7 +142,7 @@ public class UI extends javax.swing.JFrame {
             agents.add(ac2);
 
             AgentController ac3 =
-                    mainContainer3.createNewAgent("analisador", "AnalyzerAgent",argss);
+                    mainContainer3.createNewAgent("analisador", "AnalyzerAgentUI",argss);
             agents.add(ac3);
 
             for(int i=0;i<agents.size();i++){
