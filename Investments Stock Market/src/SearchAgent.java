@@ -2,6 +2,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -101,7 +102,7 @@ public class SearchAgent extends Agent {
             e.printStackTrace();
         }
 
-        this.addBehaviour(new SearchBehaviour());
+        this.addBehaviour(new SearchBehaviour(this,2000));
     }
     @Override
     protected void takeDown(){
@@ -116,9 +117,13 @@ public class SearchAgent extends Agent {
     }
 
 
-    private class SearchBehaviour extends CyclicBehaviour{
+    private class SearchBehaviour extends TickerBehaviour{
+
+        public SearchBehaviour(Agent a, long timeout){
+            super(a,timeout);
+        }
         @Override
-        public void action(){
+        public void onTick(){
             block(2000);
             // TODO colocar código de procura no stock market
 

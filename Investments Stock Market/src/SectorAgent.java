@@ -1,6 +1,7 @@
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -45,7 +46,7 @@ public class SectorAgent extends Agent {
         }
 
         this.addBehaviour(new ReceiveBehaviourInformative());
-        this.addBehaviour(new SenderBehaviour());
+        this.addBehaviour(new SendMessage(this,20000));
     }
 
 
@@ -62,10 +63,20 @@ public class SectorAgent extends Agent {
     }
 
 
-    private class SenderBehaviour extends CyclicBehaviour{
+
+
+
+
+
+
+    public class SendMessage extends TickerBehaviour{
+
+        public SendMessage(Agent a, long timeout){
+            super(a,timeout);
+        }
+
         @Override
-        public void action(){
-            block(20000);
+        public void onTick(){
             System.out.println("A enviar a Analizador...");
             if(!areaFilter.isEmpty()) {
                 HashMap<String, Empresa> lista = areaFilter.get(area);
@@ -85,9 +96,24 @@ public class SectorAgent extends Agent {
                     }else System.out.print("lista vazia");
                 }else System.out.println("lista nula!!!");
             }else System.out.println("areaFilter vazio!!!");
-            block(20000);
         }
-    };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private class ReceiveBehaviourInformative extends CyclicBehaviour{
 
         @Override

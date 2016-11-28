@@ -100,7 +100,7 @@ public class DefinerAgent extends Agent{
 
             jComboBox1 = new javax.swing.JComboBox();
             jButton1 = new javax.swing.JButton();
-            jButton2 = new javax.swing.JButton();
+//            jButton2 = new javax.swing.JButton();
             frame = new javax.swing.JFrame();
             frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -113,12 +113,12 @@ public class DefinerAgent extends Agent{
                 }
             });
 
-            jButton2.setText("Send Cyclic Message");
-            jButton2.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    jButton2ActionPerformed(evt);
-                }
-            });
+//            jButton2.setText("Send Cyclic Message");
+//            jButton2.addActionListener(new java.awt.event.ActionListener() {
+//                public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                    jButton2ActionPerformed(evt);
+//                }
+//            });
 
             javax.swing.GroupLayout layout = new javax.swing.GroupLayout(frame.getContentPane());
             frame.getContentPane().setLayout(layout);
@@ -128,7 +128,7 @@ public class DefinerAgent extends Agent{
                                     .addGap(61, 61, 61)
                                     .addComponent(jButton1)
                                     .addGap(64, 64, 64)
-                                    .addComponent(jButton2)
+//                                    .addComponent(jButton2)
                                     .addContainerGap(30, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -142,8 +142,8 @@ public class DefinerAgent extends Agent{
                                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(jButton1)
-                                            .addComponent(jButton2))
+                                            .addComponent(jButton1))
+//                                            .addComponent(jButton2))
                                     .addGap(86, 86, 86))
             );
 
@@ -228,7 +228,7 @@ public class DefinerAgent extends Agent{
 
         // Variables declaration - do not modify
         private javax.swing.JButton jButton1;
-        private javax.swing.JButton jButton2;
+//        private javax.swing.JButton jButton2;
         private javax.swing.JComboBox jComboBox1;
         public JFrame frame;
         // End of variables declaration
