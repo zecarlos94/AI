@@ -220,6 +220,8 @@ public class AnalyzerAgentUI extends Agent{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    send(response);
+
                 }else if(msg.getPerformative()==ACLMessage.INFORM) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     Empresa e = new Empresa(msg.getContent());
@@ -229,10 +231,11 @@ public class AnalyzerAgentUI extends Agent{
                 else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
-                    response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+                    response.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                    send(response);
+
                 }
 
-                send(response);
 
             }
         }

@@ -124,7 +124,6 @@ public class SearchAgent extends Agent {
         }
         @Override
         public void onTick(){
-            block(2000);
             // TODO colocar código de procura no stock market
 
             AID receiver = new AID();
@@ -158,8 +157,6 @@ public class SearchAgent extends Agent {
                     }
                     System.out.println("Procura concluída");
                 }
-
-            block(20000);
         }
     };
 

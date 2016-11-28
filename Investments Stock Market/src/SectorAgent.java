@@ -86,24 +86,7 @@ public class SectorAgent extends Agent {
             msg.setConversationId(""+time);
             msg.addReceiver(receiver);
             send(msg);
-            ACLMessage msg1 = receive();
-            if(msg1 != null && msg1.getPerformative()== ACLMessage.ACCEPT_PROPOSAL)
-            if(!areaFilter.isEmpty()) {
-                HashMap<String, Empresa> lista = areaFilter.get(area);
 
-                msg = new ACLMessage(ACLMessage.INFORM);
-                time = System.currentTimeMillis();
-                msg.addReceiver(receiver);
-                msg.setConversationId("" + time);
-                if (lista != null) {
-                    if (!lista.isEmpty()){
-                        for (Map.Entry<String, Empresa> e : lista.entrySet()) {
-                            msg1.setContent(e.getValue().toString());
-                            send(msg);
-                        }
-                    }else System.out.print("lista vazia");
-                }else System.out.println("lista nula!!!");
-            }else System.out.println("areaFilter vazio!!!");
         }
     }
 
@@ -158,7 +141,29 @@ public class SectorAgent extends Agent {
 
                     }
                 }
-                else{
+                else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
+                    ACLMessage msg1 = receive();
+                    AID receiver = new AID();
+                    receiver.setLocalName("AnalyzerAgent");
+                        if(!areaFilter.isEmpty()) {
+                            HashMap<String, Empresa> lista = areaFilter.get(area);
+
+                            ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+                            long time = System.currentTimeMillis();
+                            msg2.addReceiver(receiver);
+                            msg2.setConversationId("" + time);
+                            if (lista != null) {
+                                if (!lista.isEmpty()){
+                                    for (Map.Entry<String, Empresa> e : lista.entrySet()) {
+                                        msg2.setContent(e.getValue().toString());
+                                        send(msg2);
+                                    }
+                                }else System.out.print("lista vazia");
+                            }else System.out.println("lista nula!!!");
+                        }else System.out.println("areaFilter vazio!!!");
+
+                }
+                else if (msg.getPerformative() != ACLMessage.REJECT_PROPOSAL){
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
