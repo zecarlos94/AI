@@ -15,7 +15,7 @@ public class Empresa implements Concept {
     private List<String> stockExchangeName;
     private String companyExchangeNname;
     private String companyIndustry;
-    private int stockAvailable; // variável para simulação
+    private double stockAvailable; // variável para simulação
     // Pricing
     private double ask; // a
     private double bid; // b
@@ -142,13 +142,13 @@ public class Empresa implements Concept {
                     break;
                 case 3: this.companyIndustry = empresa[i];
                     break;
-                case 4: this.stockAvailable = Integer.parseInt(empresa[i]);
+                case 4: this.stockAvailable = Double.parseDouble(empresa[i]);
                     break;
                 case 5: this.currency= empresa[i];
                     break;
                 case 6: this.year = Integer.parseInt(empresa[i]);
                     break;
-                case 7: this.stock = Integer.parseInt(empresa[i]);
+                case 7: this.stock = Double.parseDouble(empresa[i]);
                     break;
                 case 8: this.companyCapital = Integer.parseInt(empresa[i]);
                     break;
@@ -843,7 +843,7 @@ public class Empresa implements Concept {
         }
         return aux;
     }
-    public int getStockAvailable(){
+    public double getStockAvailable(){
         return this.stockAvailable;
     }
     public int getYear(){
@@ -869,13 +869,13 @@ public class Empresa implements Concept {
             this.companyOwners.add(a);
         }
     }
-    public void setStockAvailable(int sa){
+    public void setStockAvailable(double sa){
         this.stockAvailable=sa;
     }
     public void setYear(int y){
         this.year=y;
     }
-    public void setStock(int s){
+    public void setStock(double s){
         this.stock=s;
     }
     public void setCompanyCapital(int cc){
@@ -902,6 +902,7 @@ public class Empresa implements Concept {
         a.append(companyExchangeNname+"#");
         a.append(companyIndustry+"#");
         a.append(stockAvailable+"#");
+        a.append(currency+"#");
         a.append(year+"#");
         a.append(stock+"#");
         a.append(companyCapital+"#");

@@ -134,15 +134,15 @@ public class UI extends javax.swing.JFrame {
 
             String[] argss = {};
             AgentController ac1 =
-                    mainContainer1.createNewAgent("procura", "SearchAgent",argss);
+                    mainContainer1.createNewAgent("SearchAgent", "SearchAgent",argss);
             agents.add(ac1);
 
             AgentController ac2 =
-                    mainContainer2.createNewAgent("sector", "SectorAgent",argss);
+                    mainContainer2.createNewAgent("SectorAgent", "SectorAgent",argss);
             agents.add(ac2);
 
             AgentController ac3 =
-                    mainContainer3.createNewAgent("analisador", "AnalyzerAgentUI",argss);
+                    mainContainer3.createNewAgent("AnalyzerAgent", "AnalyzerAgentUI",argss);
             agents.add(ac3);
 
             for(int i=0;i<agents.size();i++){

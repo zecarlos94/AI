@@ -102,7 +102,7 @@ public class DefinerAgent extends Agent{
             jButton1 = new javax.swing.JButton();
             jButton2 = new javax.swing.JButton();
             frame = new javax.swing.JFrame();
-            frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tecnologia", "Finanças" }));
 
@@ -159,7 +159,7 @@ public class DefinerAgent extends Agent{
             AID receiver=new AID();
             // o receiver será o agente sector
             // TODO dar o nome sector ao SectorAgent
-            receiver.setLocalName("sector");
+            receiver.setLocalName("SectorAgent");
             long time=System.currentTimeMillis();
             ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
             msg.setContent("Está disponivel?");

@@ -1,6 +1,7 @@
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -118,13 +119,22 @@ public class SearchAgent extends Agent {
     private class SearchBehaviour extends CyclicBehaviour{
         @Override
         public void action(){
+            block(2000);
             // TODO colocar código de procura no stock market
-            ACLMessage msg = receive();
+
             AID receiver = new AID();
             receiver.setLocalName("SectorAgent");
-            if(msg!=null)
-                if (msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
-                    for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
+            long time=System.currentTimeMillis();
+            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
+            msg.setContent("Está disponivel?");
+            msg.setConversationId(""+time);
+            msg.addReceiver(receiver);
+            send(msg);
+            ACLMessage msg1 = receive();
+            if(msg1!=null)
+
+                if (msg1.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
+                  for (Map.Entry<String, List<Empresa>> empli : compainies.entrySet()) {
                         List<Empresa> empl = empli.getValue();
                         for (Empresa emp : empl) {
                             //get data from yahoo
@@ -133,18 +143,18 @@ public class SearchAgent extends Agent {
                                 Empresa search = Search.getCompanyData(emp.getCompanyExchangeName());
                                 emp.update(search);
                                 long id = System.currentTimeMillis();
-                                msg = new ACLMessage(ACLMessage.INFORM);
-                                msg.setContent(empli.getKey()+"_"+emp.toString());
-                                msg.setConversationId("" + id);
-                                msg.addReceiver(receiver);
-                                send(msg);
+                                ACLMessage msg2=new ACLMessage(ACLMessage.INFORM);
+                                msg2.setContent(empli.getKey()+"_"+emp.toString());
+                                msg2.setConversationId("" + id);
+                                msg2.addReceiver(receiver);
+                                send(msg2);
                             }
                         }
                     }
                     System.out.println("Procura concluída");
                 }
 
-            block(2000);
+            block(20000);
         }
     };
 

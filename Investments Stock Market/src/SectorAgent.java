@@ -65,7 +65,8 @@ public class SectorAgent extends Agent {
     private class SenderBehaviour extends CyclicBehaviour{
         @Override
         public void action(){
-            block(25000);
+            block(20000);
+            System.out.println("A enviar a Analizador...");
             if(!areaFilter.isEmpty()) {
                 HashMap<String, Empresa> lista = areaFilter.get(area);
 
@@ -75,13 +76,16 @@ public class SectorAgent extends Agent {
                 long time = System.currentTimeMillis();
                 msg1.addReceiver(receiver);
                 msg1.setConversationId("" + time);
-                if (lista != null)
-                    if (lista.isEmpty())
+                if (lista != null) {
+                    if (!lista.isEmpty()){
                         for (Map.Entry<String, Empresa> e : lista.entrySet()) {
                             msg1.setContent(e.getValue().toString());
                             send(msg1);
                         }
-            }
+                    }else System.out.print("lista vazia");
+                }else System.out.println("lista nula!!!");
+            }else System.out.println("areaFilter vazio!!!");
+            block(20000);
         }
     };
     private class ReceiveBehaviourInformative extends CyclicBehaviour{
@@ -95,39 +99,44 @@ public class SectorAgent extends Agent {
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    send(response);
                 }else if(msg.getPerformative()==ACLMessage.INFORM){
-                    if(msg.getSender().getName()=="SearchAgent"){
-                        String[] a = msg.getContent().split("_");
-                        System.out.println("Message received from"+msg.getSender()+" the company is " + new Empresa(a[1]));
+                    if(msg.getSender().getLocalName().equals("SearchAgent")){
+                        String[] a = msg.getContent().split("_");System.out.println(msg.getContent());
                         HashMap<String,Empresa> lista = areaFilter.get(a[0]);
+                        Empresa temp = new Empresa(a[1]);
+
                         if(lista==null){
-                            Empresa temp = new Empresa(a[1].toString());
                             lista = new HashMap<String,Empresa>();
                             lista.put(temp.getCompanyExchangeName(),temp);
                             areaFilter.put(a[0],lista);
                         }
                         else{
 
-                            Empresa temp = new Empresa(a[1].toString());
                             lista.remove(temp.getCompanyExchangeName());
                             lista.put(temp.getCompanyExchangeName(),temp);
                             areaFilter.remove(a[0]);
                             areaFilter.put(a[0],lista);
-                        }
+                            for (Map.Entry<String, HashMap<String,Empresa>> e : areaFilter.entrySet())
+                                for (Map.Entry<String, Empresa> b : e.getValue().entrySet())
+                                    System.out.println(e.getKey()+" ---> " + b.getKey());
 
+
+                        }
+                        System.out.println("Company received: " + temp.getCompanyExchangeName());
                     }
-                    if(msg.getSender().equals("DefinerAgent")) {
-                        System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    if(msg.getSender().getLocalName().equals("definidor1")) {
+                        System.out.println("Área definida para "+msg.getContent());
                         area = msg.getContent();
+
                     }
                 }
                 else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+                    send(response);
                 }
-                System.out.println("" + response.getAllIntendedReceiver());
-                send(response);
             }
             block();
         }

@@ -879,7 +879,6 @@ public class Company implements Concept {
             } else a.append(";"+s);
         a.append("#");
         a.append(companyExchangeNname+"#");
-        a.append(companyIndustry+"#");
         a.append(stockAvailable+"#");
         a.append(year+"#");
         a.append(stock+"#");

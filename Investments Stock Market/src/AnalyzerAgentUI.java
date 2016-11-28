@@ -51,6 +51,7 @@ public class AnalyzerAgentUI extends Agent{
         }catch (FIPAException e){
             e.printStackTrace();
         }
+        this.addBehaviour(new ReceiveBehaviourInformative());
 
     }
     @Override
@@ -160,38 +161,6 @@ public class AnalyzerAgentUI extends Agent{
 
         private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
             // TODO add your handling code here:
-            String content = jComboBox1.getSelectedItem().toString();
-
-            System.out.println(content + " one shot message sent!!");
-
-            AID receiver=new AID();
-            // o receiver será o agente sector
-            // TODO dar o nome sector ao SectorAgent
-            receiver.setLocalName("sector");
-            long time=System.currentTimeMillis();
-            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
-            msg.setContent("Está disponivel?");
-            msg.setConversationId(""+time);
-            msg.addReceiver(receiver);
-            send(msg);
-
-            ACLMessage msg1 = receive();
-            while(msg1==null) msg1 = receive();
-            if(msg1 != null){
-                if(msg1.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
-
-
-                    ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
-                    System.out.println("Received message from "+msg1.getSender().getLocalName()+". Conteúdo: "+ msg1.getContent());
-                    time = System.currentTimeMillis();
-                    msg2.setContent(content);
-                    msg2.setConversationId(""+time);
-                    msg2.addReceiver(receiver);
-                    send(msg2);
-                }else{
-                    JOptionPane.showMessageDialog(myGui.frame,"SectorAgent not available, try again later!");
-                }
-            }
         }
 
         /**
@@ -266,7 +235,6 @@ public class AnalyzerAgentUI extends Agent{
                 send(response);
 
             }
-            block();
         }
     };
 
