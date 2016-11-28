@@ -102,6 +102,7 @@ public class DefinerAgent extends Agent{
             jButton1 = new javax.swing.JButton();
 //            jButton2 = new javax.swing.JButton();
             frame = new javax.swing.JFrame();
+            frame.setResizable(false);
             frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tecnologia", "Finanças" }));
@@ -120,31 +121,55 @@ public class DefinerAgent extends Agent{
 //                }
 //            });
 
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(frame.getContentPane());
+           /* javax.swing.GroupLayout layout = new javax.swing.GroupLayout(frame.getContentPane());
             frame.getContentPane().setLayout(layout);
             layout.setHorizontalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                    .addGap(61, 61, 61)
+                                    .addGap(41, 41, 41)
                                     .addComponent(jButton1)
-                                    .addGap(64, 64, 64)
+                                    .addGap(30, 30, 30)
 //                                    .addComponent(jButton2)
-                                    .addContainerGap(30, Short.MAX_VALUE))
+                                    .addContainerGap(50, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(85, 85, 85))
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(25, 25, 25))
             );
             layout.setVerticalGroup(
                     layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                    .addGap(67, 67, 67)
+                                    .addGap(27, 27, 27)
                                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                             .addComponent(jButton1))
 //                                            .addComponent(jButton2))
-                                    .addGap(86, 86, 86))
+                                    .addGap(10, 10, 10))
+            );*/
+
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(frame.getContentPane());
+            frame.getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                    .addGap(15, 15, 15)
+                                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                    .addGap(90, 90, 90)
+                                                    .addComponent(jButton1)))
+                                    .addGap(15, 15, 15))
+            );
+            layout.setVerticalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addGap(19, 19, 19)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                                    .addComponent(jButton1)
+                                    .addContainerGap())
             );
 
             frame.pack();
