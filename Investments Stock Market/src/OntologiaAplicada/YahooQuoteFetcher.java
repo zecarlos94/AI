@@ -1,3 +1,5 @@
+package OntologiaAplicada;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +23,7 @@ public class YahooQuoteFetcher {
 		  System.out.println("TSLA -> Price: "+bean.getPrice()+" Change: "+bean.getChange()+" Volume: "+bean.getVolume()+" Last update: "+bean.getLastUpdated()+"\n Open: "+bean.getOpen()+" High: "+bean.getHigh()+" Low: "+bean.getLow());
 
       MarketDataBean bean1 = fetcher.getData("MSFT");
-      System.out.println("MSFT -> Price: "+bean1.getPrice());
+      System.out.println("MSFT -> Price: "+bean1.getPrice()+","+bean1.getSymbol());
 		}
 		catch(Exception e) {
 			e.printStackTrace();

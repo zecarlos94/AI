@@ -1,3 +1,5 @@
+package OntologiaAplicada;
+
 public class MarketDataBean {
 
 	String	symbol;

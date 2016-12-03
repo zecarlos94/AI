@@ -94,9 +94,25 @@ public class Search {
   }
 
   public static void main(String[] args) {
+    // Já dá para outras SE!!!
+    //Adicionar extensao .? à frente do nome
+    //Neste caso .L é para a LDSE
+    // Ver Exchanges and Yahoo em
+    //http://www.jarloo.com/yahoo_finance/
+    //Empresa company = getCompanyData("RMG.L");
+
+    //Neste caso .LS é para a bolsa de Lisboa
+    //Empresa company = getCompanyData("SON.LS");
+    //System.out.println(company.getStockExchange()+","+company.getRevenue());
+
     Empresa company = getCompanyData("AAPL");
-    String x = company.toString();
-    System.out.println(x);;
+   System.out.println(company.getPegRatio()+";"+company.getPeRatio()+";"+company.getPriceBook()+";"+company.getPriceSales()+";"+company.getEpsEstimCurYear()+"#"+company.getEpsEstimNextYear()+";"+company.getEarningsPerShare()+";"+
+   company.getDividendPerShare()+";"+company.getOpen()+"#"+company.getPreviousOpen()+","+company.getPercentChange200()+"#"+company.getPercentChange50()+
+   "#"+company.getChangeInPercent()+";"+company.getHoldingGainPercent()+";"+company.getTickerTrend());
+
+
+//    String x = company.toString();
+//    System.out.println(x);
   }
 
 }
