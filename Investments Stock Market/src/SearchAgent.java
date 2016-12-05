@@ -26,7 +26,6 @@ import java.util.TreeMap;
 public class SearchAgent extends Agent {
 
     TreeMap<String,List<Empresa>> compainies = new TreeMap<String, List<Empresa>>();
-
     @Override
     protected void setup() {
         super.setup();
@@ -117,6 +116,7 @@ public class SearchAgent extends Agent {
     }
 
 
+
     private class SearchBehaviour extends TickerBehaviour{
 
         public SearchBehaviour(Agent a, long timeout){
@@ -127,7 +127,17 @@ public class SearchAgent extends Agent {
             // TODO colocar código de procura no stock market
 
             AID receiver = new AID();
-            receiver.setLocalName("SectorAgent");
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("SectorAgent");
+            template.addServices(sd);
+
+            try {
+                DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                    receiver.setLocalName(result[0].getName().getLocalName().toString());
+                }catch (Exception e ){e.printStackTrace();}
+
             long time=System.currentTimeMillis();
             ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
             msg.setContent("Está disponivel?");

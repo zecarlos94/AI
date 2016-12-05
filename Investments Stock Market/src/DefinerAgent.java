@@ -103,7 +103,7 @@ public class DefinerAgent extends Agent{
 //            jButton2 = new javax.swing.JButton();
             frame = new javax.swing.JFrame();
             frame.setResizable(false);
-            frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tecnologia", "Finanças" }));
 
@@ -184,7 +184,17 @@ public class DefinerAgent extends Agent{
             AID receiver=new AID();
             // o receiver será o agente sector
             // TODO dar o nome sector ao SectorAgent
-            receiver.setLocalName("SectorAgent");
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("SectorAgent");
+            template.addServices(sd);
+
+            try {
+                DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                receiver.setLocalName(result[0].getName().getLocalName().toString());
+            }catch (Exception e ){e.printStackTrace();}
+
             long time=System.currentTimeMillis();
             ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
             msg.setContent("Está disponivel?");

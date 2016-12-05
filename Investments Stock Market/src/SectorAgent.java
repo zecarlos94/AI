@@ -135,7 +135,7 @@ public class SectorAgent extends Agent {
                         }
                         System.out.println("Company received: " + temp.getCompanyExchangeName());
                     }
-                    if(msg.getSender().getLocalName().equals("definidor1")) {
+                    else{
                         System.out.println("Área definida para "+msg.getContent());
                         area = msg.getContent();
 
@@ -144,8 +144,18 @@ public class SectorAgent extends Agent {
                 else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
                     ACLMessage msg1 = receive();
                     AID receiver = new AID();
-                    receiver.setLocalName("AnalyzerAgent");
-                        if(!areaFilter.isEmpty()) {
+                    DFAgentDescription template = new DFAgentDescription();
+                    ServiceDescription sd = new ServiceDescription();
+                    sd.setType("AnalyzerAgent");
+                    template.addServices(sd);
+
+                    try {
+                        DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                        receiver.setLocalName(result[0].getName().getLocalName().toString());
+                    }catch (Exception e ){e.printStackTrace();}
+
+                    if(!areaFilter.isEmpty()) {
                             HashMap<String, Empresa> lista = areaFilter.get(area);
 
                             ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);

@@ -8,8 +8,13 @@ import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -19,15 +24,20 @@ import java.util.ArrayList;
  * @author zecarlos
  */
 public class UI extends javax.swing.JFrame {
+
+
     int counterDefinerClicks=1;
     int counterAgentsClicks=1;
     int init = 0;
+    private AgentController ac;
+    private int i=0;
     /**
      * Creates new form NewJFrame
      */
     public UI() {
         initComponents();
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,7 +54,7 @@ public class UI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jButton1.setText("Define Area");
@@ -116,21 +126,28 @@ public class UI extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (init == 0){
-        ArrayList<AgentController> agents = new ArrayList<>();
-        // get a JADE runtime
-        Runtime rt = Runtime.instance();
-        // create a default profile
-        Profile p1 = new ProfileImpl();
-        Profile p2 = new ProfileImpl();
-        Profile p3 = new ProfileImpl();
-        // create the Main-container
-        ContainerController mainContainer1 = rt.createAgentContainer(p1);
-        ContainerController mainContainer2 = rt.createAgentContainer(p2);
-        ContainerController mainContainer3 = rt.createAgentContainer(p3);
+            ArrayList<AgentController> agents = new ArrayList<>();
+            // get a JADE runtime
+            Runtime rt = Runtime.instance();
+            // create a default profile
+            Profile p1 = new ProfileImpl();
+            Profile p2 = new ProfileImpl();
+            Profile p3 = new ProfileImpl();
+            Profile p4 = new ProfileImpl();
+            Profile p5 = new ProfileImpl();
+            Profile p6 = new ProfileImpl();
+            // create the Main-container
+            ContainerController mainContainer1 = rt.createAgentContainer(p1);
+            ContainerController mainContainer2 = rt.createAgentContainer(p2);
+            ContainerController mainContainer3 = rt.createAgentContainer(p3);
+            ContainerController mainContainer4 = rt.createAgentContainer(p4);
+            ContainerController mainContainer5 = rt.createAgentContainer(p5);
+            ContainerController mainContainer6 = rt.createAgentContainer(p6);
 
 
         // create all agents but Analyzer
         try {
+
 
             String[] argss = {};
             AgentController ac1 =
@@ -145,6 +162,16 @@ public class UI extends javax.swing.JFrame {
                     mainContainer3.createNewAgent("AnalyzerAgent", "AnalyzerAgentUI",argss);
             agents.add(ac3);
 
+            AgentController ac4 =
+                    mainContainer4.createNewAgent("BidderAgent", "BidderAgent",argss);
+            agents.add(ac4);
+
+            AgentController ac5 =
+                    mainContainer5.createNewAgent("SellerAgent", "SellerAgent",argss);
+            agents.add(ac5);
+            AgentController ac6 =
+                    mainContainer6.createNewAgent("MartketAgent", "MarketAgent",argss);
+            agents.add(ac6);
             for(int i=0;i<agents.size();i++){
                 agents.get(i).start();
             }
@@ -156,7 +183,29 @@ public class UI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)  {//GEN-FIRST:event_jButton2ActionPerformed
+
+        // get a JADE runtime
+        Runtime rt = Runtime.instance();
+        // create a default profile
+        Profile p = new ProfileImpl();
+        // create the Main-container
+        ContainerController mainContainer = rt.createAgentContainer(p);
+
+
+        // create 1 DefinerAgent
+        try {
+
+            String[] argss = {};
+            ac =
+                    mainContainer.createNewAgent("dfGUI"+ counterAgentsClicks, "DF",argss);
+            ac.start();
+            counterAgentsClicks++;
+        } catch (jade.wrapper.StaleProxyException e) {
+            System.err.println("Error launching agent...");
+        }
+
+
 
 
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -176,7 +225,7 @@ public class UI extends javax.swing.JFrame {
             try {
 
                 String[] argss = {};
-                AgentController ac =
+              ac =
                         mainContainer.createNewAgent(nameNewAgent+counterDefinerClicks, "DefinerAgent",argss);
                 counterDefinerClicks++;
                 ac.start();

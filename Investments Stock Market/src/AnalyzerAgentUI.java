@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,11 @@ public class AnalyzerAgentUI extends Agent{
     //separar o map supramencionado nestes dois maps de acordo com o método investible();
     private HashMap<String,Empresa> companiesInvesting = new HashMap<String,Empresa>();
     private HashMap<String,Empresa> companiesNotInvesting = new HashMap<String,Empresa>();
+
+    //historico compras
+    private HashMap<String,ArrayList<String>> bought;
+    private HashMap<String,ArrayList<String>> sold;
+
 
     //Para cada empresa guardar o capital para investir, o preço máximo por ação, o número de ações que pode comprar no máximo(stockAvailable)
     private HashMap<String,ArrayList<Double>> investing = new HashMap<String,ArrayList<Double>>();
@@ -199,23 +205,77 @@ public class AnalyzerAgentUI extends Agent{
 
            System.out.println("Investible? "+investir);
            if(investir){
+               companiesInvesting.remove(e.getKey());
                companiesInvesting.put( e.getKey(), e.getValue() );
                //50$ a mais do preço atual
-               priceMaxPerShare=e.getValue().getAsk()+50;
+
+
+
+//               xe.com/currency 5/12/16 15h47
+               if(e.getValue().getCurrency().equals("dollar"))
+                   priceMaxPerShare=e.getValue().getAsk()*0.93136 +50;
+               if(e.getValue().getCurrency().equals("euro"))
+                   priceMaxPerShare=e.getValue().getAsk() +50;
+               if(e.getValue().getCurrency().equals("yen"))
+                   priceMaxPerShare=e.getValue().getAsk()*0.00813 +50;
+               if(e.getValue().getCurrency().equals("british pound"))
+                    priceMaxPerShare=e.getValue().getAsk()*1.18436 +50;
+
+
                //3000$ para investir(até 300 ações mais ou menos) se estiver a crescer
-               if(bomCrescimentoGradual) capitalMax=3000;
+               if(bomCrescimentoGradual){
+                   capitalMax=3000;
+               }
                //Se não estiver a crescer, ser mais cauteloso (minimizar os riscos)
-               else capitalMax=1000;
+               else{
+                   capitalMax=1000;
+               }
                //Adicionar argumentos para o BidderAgent comprar acções
+
+               if(e.getValue().getCurrency().equals("dollar"))
+                   args.add(e.getValue().getAsk()*0.93136);
+               if(e.getValue().getCurrency().equals("euro"))
+                   args.add(e.getValue().getAsk());
+               if(e.getValue().getCurrency().equals("yen"))
+                   args.add(e.getValue().getAsk()*0.00813);
+               if(e.getValue().getCurrency().equals("british pound"))
+                   args.add(e.getValue().getAsk()*1.18436);
+
+
                args.add(capitalMax);
                args.add(priceMaxPerShare);
                args.add(stockAvailable);
+               investing.remove((e.getKey()));
                investing.put( e.getKey(), args );
                //Limpar argumentos para a próxima empresa
                args.clear();
            }
            else{
+               companiesNotInvesting.remove(e.getKey());
                companiesNotInvesting.put( e.getKey(), e.getValue() );
+
+               if(e.getValue().getCurrency().equals("dollar"))
+               args.add(e.getValue().getAsk()*0.93136);
+               if(e.getValue().getCurrency().equals("euro"))
+                   args.add(e.getValue().getAsk());
+               if(e.getValue().getCurrency().equals("yen"))
+                   args.add(e.getValue().getAsk()*0.00813);
+               if(e.getValue().getCurrency().equals("british pound"))
+                   args.add(e.getValue().getAsk()*1.18436);
+
+               Double total = 0.0;
+               for(String s :bought.get(e.getKey())){
+                   String[] s1 = s.split("#");
+                   total += Double.parseDouble(s1[0]);
+               }
+               for(String s :sold.get(e.getKey())){
+                   String[] s1 = s.split("#");
+                   total -= Double.parseDouble(s1[0]);
+               }
+               args.add(total);
+               investing.remove(e.getKey());
+               investing.put(e.getKey(),args);
+               args.clear();
            }
         }
         //System.out.println("#Investible: "+companiesInvesting.size());
@@ -250,7 +310,7 @@ public class AnalyzerAgentUI extends Agent{
             e.printStackTrace();
         }
         this.addBehaviour(new ReceiveBehaviourInformative());
-
+        this.addBehaviour(new InvestibleBehaviour(this,1000));
     }
     @Override
     protected void takeDown(){
@@ -300,19 +360,32 @@ public class AnalyzerAgentUI extends Agent{
 
             jComboBox1 = new javax.swing.JComboBox();
             jButton1 = new javax.swing.JButton();
-
+            jComboBox1.setVisible(false);
+            jButton1.setVisible(false);
             jScrollPane1 = new javax.swing.JScrollPane();
+            jScrollPane2 = new javax.swing.JScrollPane();
             jTextArea1 = new javax.swing.JTextArea();
+            jTextArea2 = new javax.swing.JTextArea();
             jLabel1 = new javax.swing.JLabel();
+            jLabel1.setVisible(false);
+
+            jLabel2 = new javax.swing.JLabel();
+            jLabel3 = new javax.swing.JLabel();
+            jLabel2.setText("Histórico de Compras");
+            jLabel3.setText("Histórico de Vendas");
 
             frame = new javax.swing.JFrame();
             frame.setResizable(false);
             frame.setTitle("Histórico das Ações");
-            frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
+            frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            jTextArea1.setEditable(false);
+            jTextArea2.setEditable(false);
             jTextArea1.setColumns(20);
             jTextArea1.setRows(5);
+            jTextArea2.setColumns(20);
+            jTextArea2.setRows(5);
             jScrollPane1.setViewportView(jTextArea1);
+            jScrollPane2.setViewportView(jTextArea2);
 
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compras", "Vendas" }));
 
@@ -332,7 +405,11 @@ public class AnalyzerAgentUI extends Agent{
                             .addGroup(layout.createSequentialGroup()
                                     .addGap(16, 16, 16)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jLabel2)
                                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel3)
+                                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
+
                                             .addGroup(layout.createSequentialGroup()
                                                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -350,7 +427,13 @@ public class AnalyzerAgentUI extends Agent{
                                             .addComponent(jButton1)
                                             .addComponent(jLabel1))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jLabel2)
+                                    .addGap(5,5,5)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                                    .addGap(20, 20, 20)
+                                    .addComponent(jLabel3)
+                                    .addGap(5,5,5)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
                                     .addGap(16, 16, 16))
             );
 
@@ -400,13 +483,60 @@ public class AnalyzerAgentUI extends Agent{
         public javax.swing.JButton jButton1;
         public javax.swing.JComboBox<String> jComboBox1;
         public javax.swing.JLabel jLabel1;
+        public javax.swing.JLabel jLabel2;
+        public javax.swing.JLabel jLabel3;
         public javax.swing.JScrollPane jScrollPane1;
+        public javax.swing.JScrollPane jScrollPane2;
         public javax.swing.JTextArea jTextArea1;
+        public javax.swing.JTextArea jTextArea2;
+
         public JFrame frame;
         // End of variables declaration
     };
 
+    private class InvestibleBehaviour extends TickerBehaviour{
 
+        public InvestibleBehaviour(Agent a, long timeout){
+            super(a,timeout);
+        }
+        @Override
+        public void onTick(){
+            investible();
+            AID receiver = new AID();
+            long time=System.currentTimeMillis();
+            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
+            msg.setContent("Está disponivel?");
+            msg.setConversationId(""+time);
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            if (!companiesInvesting.isEmpty()){
+                sd.setType("BidderAgent");
+                template.addServices(sd);
+
+                try {
+                    DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                    receiver.setLocalName(result[0].getName().getLocalName().toString());
+                }catch (Exception e ){e.printStackTrace();}
+
+                msg.addReceiver(receiver);
+                send(msg);
+            }
+            if (!companiesNotInvesting.isEmpty()){
+                sd.setType("SellerAgent");
+                template.addServices(sd);
+
+                try {
+                    DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                    receiver.setLocalName(result[0].getName().getLocalName().toString());
+                }catch (Exception e ){e.printStackTrace();}
+
+                msg.addReceiver(receiver);
+                send(msg);
+            }
+        }
+    };
     private class ReceiveBehaviourInformative extends CyclicBehaviour {
 
         @Override
@@ -420,11 +550,93 @@ public class AnalyzerAgentUI extends Agent{
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                     send(response);
 
-                }else if(msg.getPerformative()==ACLMessage.INFORM) {
+                }else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("SearchAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     Empresa e = new Empresa(msg.getContent());
                     if(companies.get(e.getCompanyExchangeName())!=null) companies.remove(e.getCompanyExchangeName());
                     companies.put(e.getCompanyExchangeName(),e);
+                }
+
+                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("BidderAgent")) {
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    String[] a = msg.getContent().split("_");
+                    String[] a1 = a[1].split("|");
+
+                    if (bought.get(a[0])!=null){
+                        ArrayList<String> a2 =  bought.get(a[0]);
+                        for (String s :a1){
+                            a2.add(s);
+                            String[] a3 = s.split("#");
+                            myGui.jTextArea1.setText(myGui.jTextArea1.getText()+"Foram compradas "+a3[0]+" por " +a3[1] + "€.\n");
+                        }
+
+                    }
+                    else{
+                        ArrayList<String> a2 = new ArrayList<>();
+                        for (String s :a1){
+                            a2.add(s);
+                            String[] a3 = s.split("#");
+                            myGui.jTextArea1.setText(myGui.jTextArea1.getText()+"Foram compradas "+a3[0]+" por " +a3[1] + "€.\n");
+                        }
+                        bought.put(a[0],a2);
+                    }
+                }
+
+                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("SellerAgent")) {
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    String[] a = msg.getContent().split("_");
+                    String[] a1 = a[1].split("|");
+
+                    if (sold.get(a[0])!=null){
+                        ArrayList<String> a2 =  sold.get(a[0]);
+                        for (String s :a1){
+                            a2.add(s);
+                            String[] a3 = s.split("#");
+                            myGui.jTextArea2.setText(myGui.jTextArea2.getText()+"Foram vendidas "+a3[0]+" por " +a3[1] + "€.\n");
+                        }
+
+                    }
+                    else{
+                        ArrayList<String> a2 = new ArrayList<>();
+                        for (String s :a1){
+                            a2.add(s);
+                            String[] a3 = s.split("#");
+                            myGui.jTextArea2.setText(myGui.jTextArea2.getText()+"Foram vendidas "+a3[0]+" por " +a3[1] + "€.\n");
+                        }
+                        bought.put(a[0],a2);
+                    }
+                }
+
+                else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("SellerAgent")) {
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+
+                    for(Map.Entry n: bought.entrySet()){
+                        if(companiesNotInvesting.containsKey(n.getKey())){
+                            ACLMessage msg1 = msg.createReply();
+                            Empresa e = companiesNotInvesting.get(n.getKey());
+                            StringBuilder mensage = new StringBuilder();
+                            mensage.append(e.toString() + "_");
+                            ArrayList<Double> args = investing.get(n.getKey());
+                            for (Double d : args)
+                                mensage.append("#" + d);
+                            mensage.append("#" + n.getValue());
+                            msg1.setContent(mensage.toString());
+                            send(msg1);
+                        }
+                    }
+                }
+                else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("BidderAgent")) {
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    for (Map.Entry e : companiesInvesting.entrySet()) {
+                        ACLMessage msg1 = msg.createReply();
+                        StringBuilder mensage = new StringBuilder();
+                        mensage.append(e.getValue().toString() + "_");
+                        ArrayList<Double> args = investing.get(e.getKey());
+                        for (Double d : args)
+                            mensage.append("#" + d);
+                        msg1.setContent(mensage.toString());
+                        send(msg1);
+                    }
                 }
                 else{
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
@@ -434,7 +646,6 @@ public class AnalyzerAgentUI extends Agent{
 
                 }
             }
-        investible(); // TODO ver onde se pode chamar a função
         }
     };
 
