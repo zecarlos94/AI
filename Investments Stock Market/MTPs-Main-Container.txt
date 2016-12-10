@@ -1,1 +1,1 @@
-http://[fe80:0:0:0:186f:c8dc:1771:fd3e%10]:7778/acc
+http://mbp-de-jose-8.lan:7778/acc

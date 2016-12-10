@@ -87,7 +87,7 @@ public class SellerAgent extends Agent {
             ACLMessage msg = receive();
             if(msg != null){
                 ACLMessage response=msg.createReply();
-                if(msg.getPerformative()==ACLMessage.REQUEST){
+                if(msg.getPerformative()==ACLMessage.PROPOSE){
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);

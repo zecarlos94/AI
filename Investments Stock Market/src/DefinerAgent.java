@@ -105,7 +105,7 @@ public class DefinerAgent extends Agent{
             frame.setResizable(false);
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-            jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tecnologia", "Finanças" }));
+            jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tecnologia", "Comunicações", "Automóvel" , "Energia" }));
 
             jButton1.setText("Send Message");
             jButton1.addActionListener(new java.awt.event.ActionListener() {
