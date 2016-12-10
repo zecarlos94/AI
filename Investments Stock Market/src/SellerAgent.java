@@ -152,10 +152,11 @@ public class SellerAgent extends Agent {
                     }
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("MarketAgent")) {
                     ACLMessage msg1 = msg.createReply();
+                    msg1.setPerformative(ACLMessage.INFORM);
                     StringBuilder st;
-                    for (Map.Entry e : investCompanies.entrySet()) {
+                    for (Map.Entry<String,Empresa> e : investCompanies.entrySet()) {
                         st = new StringBuilder();
-                        st.append(e.getValue().toString() + "_");
+                        st.append(e.getValue().getCompanyExchangeName() + "_");
                         for (Double d : investargs.get(e.getKey()))
                             st.append("#" + d);
 

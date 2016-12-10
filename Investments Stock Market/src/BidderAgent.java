@@ -143,6 +143,7 @@ public class BidderAgent extends Agent {
 
               }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("AnalyzerAgent")) {
                   ACLMessage msg1 = msg.createReply();
+                  msg1.setPerformative(ACLMessage.INFORM);
                   StringBuilder st;
                   for (Map.Entry<String,ArrayList<String>> e : historic.entrySet()) {
                       st = new StringBuilder();
@@ -157,9 +158,9 @@ public class BidderAgent extends Agent {
               }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("MarketAgent")) {
                   ACLMessage msg1 = msg.createReply();
                   StringBuilder st;
-                  for (Map.Entry e : investCompanies.entrySet()) {
+                  for (Map.Entry<String,Empresa> e : investCompanies.entrySet()) {
                       st = new StringBuilder();
-                      st.append(e.getValue().toString()+"_");
+                      st.append(e.getValue().getCompanyExchangeName()+"_");
                       for (Double d : investargs.get(e.getKey()))
                           st.append("#"+d);
 

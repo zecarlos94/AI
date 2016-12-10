@@ -9,10 +9,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by andrepinto on 05/12/16.
@@ -27,6 +24,10 @@ public class MarketAgent extends Agent{
     protected void setup(){
         super.setup();
 
+        compras = new HashMap<>();
+        vendas = new HashMap<>();
+        efetuadasC = new HashMap<>();
+        efetuadasV = new HashMap<>();
         System.out.println(this.getLocalName()+ " starting!");
 
         //registo do serviço
@@ -215,12 +216,36 @@ public class MarketAgent extends Agent{
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 }
-                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("AnalyzerAgent")) {
+                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("BidderAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    String[] a1 = msg.getContent().split("_");
+                    ArrayList<Double> lista = new ArrayList<>();
+                    String[] a2 = a1[1].split("#");
+                    for (String d : a2){
+                        lista.add(Double.parseDouble(d));
+                    }
+
+                    if(compras.get(a1[0])!=null) compras.remove(a1[0]);
+
+                    compras.put(a1[0],lista);
+
+                }else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("SellerAgent")) {
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
+                    String[] a1 = msg.getContent().split("_");
+                    ArrayList<Double> lista = new ArrayList<>();
+                    String[] a2 = a1[1].split("#");
+                    for (String d : a2){
+                        lista.add(Double.parseDouble(d));
+                    }
+
+                    if(vendas.get(a1[0])!=null) vendas.remove(a1[0]);
+
+                    vendas.put(a1[0],lista);
 
 
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("BidderAgent")) {
                     ACLMessage msg1 = msg.createReply();
+                    if(!efetuadasV.isEmpty())
                     for (Map.Entry<String,ArrayList<String>> e : efetuadasV.entrySet()) {
                         StringBuilder st = new StringBuilder();
                         st.append(e.getKey() + "_");
@@ -233,6 +258,7 @@ public class MarketAgent extends Agent{
 
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("SellerAgent")) {
                     ACLMessage msg1 = msg.createReply();
+                    if(!efetuadasC.isEmpty())
                     for (Map.Entry<String,ArrayList<String>> e : efetuadasC.entrySet()) {
                         StringBuilder st = new StringBuilder();
                         st.append(e.getKey() + "_");

@@ -102,8 +102,9 @@ public class Empresa implements Concept {
         this.symbol = symbol;
     }
 
-    public Empresa(String industria, String owners, double st, int y, String SEN, String cen){
+    public Empresa(String industria, String owners, double st, int y, String SEN, String cen,String curr){
         this.companyIndustry=industria;
+        this.currency = curr;
         String [] own = owners.split(";");
         this.companyOwners= new ArrayList<String>();
         int i = 0;

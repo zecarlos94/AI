@@ -25,7 +25,7 @@ public class SectorAgent extends Agent {
         super.setup();
 
         areaFilter = new HashMap<String,HashMap<String,Empresa>>();
-
+        area = null;
         ArrayList<Empresa> lista = new ArrayList<Empresa>();
 
 
@@ -77,16 +77,26 @@ public class SectorAgent extends Agent {
 
         @Override
         public void onTick(){
-            System.out.println("A enviar a Analizador...");
-            AID receiver = new AID();
-            receiver.setLocalName("AnalyzerAgent");
-            long time=System.currentTimeMillis();
-            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
-            msg.setContent("Está disponivel?");
-            msg.setConversationId(""+time);
-            msg.addReceiver(receiver);
-            send(msg);
+            if(area!=null) {
+                System.out.println("A enviar a Analizador...");
+                AID receiver = new AID();
+                DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("AnalyzerAgent");
+                template.addServices(sd);
 
+                try {
+                    DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                    receiver.setLocalName(result[0].getName().getLocalName().toString());
+                }catch (Exception e ){e.printStackTrace();}
+                long time = System.currentTimeMillis();
+                ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+                msg.setContent("Está disponivel?");
+                msg.setConversationId("" + time);
+                msg.addReceiver(receiver);
+                send(msg);
+            }
         }
     }
 

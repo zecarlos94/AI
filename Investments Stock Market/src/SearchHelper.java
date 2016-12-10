@@ -8,7 +8,13 @@ public class SearchHelper {
 		Double y;
 		if (Pattern.matches("N/A", x))
 			y = 0.00;
-    else
+		else if (Pattern.matches("nan", x))
+			y = 0.00;
+		else if (x.equals("+inf"))
+			y = 999999999999999999999999999999999.00;
+		else if (x.equals("-inf"))
+			y = -999999999999999999999999999999999.00;
+		else
 			y = Double.parseDouble(x);
 		return y;
 	}

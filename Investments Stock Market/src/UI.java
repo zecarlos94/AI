@@ -169,9 +169,9 @@ public class UI extends javax.swing.JFrame {
             AgentController ac5 =
                     mainContainer5.createNewAgent("SellerAgent", "SellerAgent",argss);
             agents.add(ac5);
-            AgentController ac6 =
-                    mainContainer6.createNewAgent("MartketAgent", "MarketAgent",argss);
-            agents.add(ac6);
+//            AgentController ac6 =
+//                    mainContainer6.createNewAgent("MartketAgent", "MarketAgent",argss);
+//            agents.add(ac6);
             for(int i=0;i<agents.size();i++){
                 agents.get(i).start();
             }

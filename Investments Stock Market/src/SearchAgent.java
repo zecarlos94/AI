@@ -88,7 +88,7 @@ public class SearchAgent extends Agent {
                             System.out.println("Stock Exchange Name : " + eElement1.getAttribute("sen"));
                             System.out.println("Company Exchange Name : " + eElement1.getAttribute("cen"));
 
-                            temp2.add(new Empresa(area,eElement1.getAttribute("owners"),Double.parseDouble(eElement1.getAttribute("stock")),Integer.parseInt(eElement1.getAttribute("year")),eElement1.getAttribute("sen"),eElement1.getAttribute("cen")));
+                            temp2.add(new Empresa(area,eElement1.getAttribute("owners"),Double.parseDouble(eElement1.getAttribute("stock")),Integer.parseInt(eElement1.getAttribute("year")),eElement1.getAttribute("sen"),eElement1.getAttribute("cen"),eElement1.getAttribute("currency")));
                         }
                         System.out.println("");
                     }
