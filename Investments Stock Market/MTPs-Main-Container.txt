@@ -1,1 +1,1 @@
-http://mbp-de-andre.home:7778/acc
+http://mbp-de-andre:7778/acc

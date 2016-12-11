@@ -137,11 +137,10 @@ public class SectorAgent extends Agent {
                             lista.put(temp.getCompanyExchangeName(),temp);
                             areaFilter.remove(a[0]);
                             areaFilter.put(a[0],lista);
-                            for (Map.Entry<String, HashMap<String,Empresa>> e : areaFilter.entrySet())
+                            /*for (Map.Entry<String, HashMap<String,Empresa>> e : areaFilter.entrySet())
                                 for (Map.Entry<String, Empresa> b : e.getValue().entrySet())
                                     System.out.println(e.getKey()+" ---> " + b.getKey());
-
-
+*/
                         }
                         System.out.println("Company received: " + temp.getCompanyExchangeName());
                     }

@@ -38,7 +38,7 @@ public class SellerAgent extends Agent {
             e.printStackTrace();
         }
         this.addBehaviour(new ReceiveBehaviourInformative());
-        this.addBehaviour(new InvestibleBehaviour(this,2000));
+        this.addBehaviour(new InvestibleBehaviour(this,3000));
     }
 
     @Override
@@ -59,13 +59,14 @@ public class SellerAgent extends Agent {
         }
         @Override
         public void onTick(){
-            AID receiver = new AID();
-            long time=System.currentTimeMillis();
-            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
-            msg.setContent("Está disponivel?");
-            msg.setConversationId(""+time);
-            DFAgentDescription template = new DFAgentDescription();
-            ServiceDescription sd = new ServiceDescription();
+            if (!investCompanies.isEmpty()) {
+                AID receiver = new AID();
+                long time = System.currentTimeMillis();
+                ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+                msg.setContent("Está disponivel?");
+                msg.setConversationId("" + time);
+                DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
                 sd.setType("MarketAgent");
                 template.addServices(sd);
 
@@ -73,11 +74,13 @@ public class SellerAgent extends Agent {
                     DFAgentDescription[] result = DFService.search(myAgent, template);
 
                     receiver.setLocalName(result[0].getName().getLocalName().toString());
-                }catch (Exception e ){e.printStackTrace();}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 msg.addReceiver(receiver);
                 send(msg);
-
+            }
         }
     };
     private class ReceiveBehaviourInformative extends CyclicBehaviour {
@@ -91,49 +94,64 @@ public class SellerAgent extends Agent {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    send(response);
                 }
+
                 else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("AnalyzerAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
-                    String[] a = msg.getContent().split("_");
-                    Empresa temp = new Empresa(a[0]);
-                    investCompanies.remove(temp.getCompanyExchangeName());
-                    investCompanies.put(temp.getCompanyExchangeName(),temp);
-                    String[] a2 = a[1].split("#");
-                    ArrayList<Double> args = new ArrayList<>();
-                    for(String s : a2){
-                        args.add(Double.parseDouble(s));
+                    if (msg.getContent()!=null) {
+                        String[] a = msg.getContent().split("_");
+                        Empresa temp = new Empresa(a[0]);
+                        investCompanies.remove(temp.getCompanyExchangeName());
+                        investCompanies.put(temp.getCompanyExchangeName(), temp);
+                        String[] a2 = a[1].split("#");
+                        ArrayList<Double> args = new ArrayList<>();
+                        for (String s : a2) {
+                            args.add(Double.parseDouble(s));
+                        }
+                        investargs.remove(temp.getCompanyExchangeName());
+                        investargs.put(temp.getCompanyExchangeName(), args);
                     }
-                    investargs.remove(temp.getCompanyExchangeName());
-                    investargs.put(temp.getCompanyExchangeName(),args);
                 }else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("MarketAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
-                    String[] a = msg.getContent().split("_");
-                    if(historic.get(a[0])==null){
-                        ArrayList<String> a1 = new ArrayList<>();
-                        a1.add(a[1]);
-                        historic.put(a[0],a1);
-                    }else{
-                        ArrayList<String> a1 = historic.get(a[0]);
-                        a1.add(a[1]);
+                    if (msg.getContent()!=null) {
+                        String[] a = msg.getContent().split("_");
+
+                        if (historic.get(a[0]) == null) {
+                            ArrayList<String> a1 = new ArrayList<>();
+                            String[] a2 = a[1].split("-");
+                            for (String d : a2) {
+                                if (!d.isEmpty())
+                                    a1.add(d);
+                            }
+                            historic.put(a[0], a1);
+                        } else {
+                            ArrayList<String> a1 = historic.get(a[0]);
+                            String[] a2 = a[1].split("-");
+                            for (String d : a2) {
+                                if (!d.isEmpty())
+                                    a1.add(d);
+                            }
+                        }
+                        AID receiver = new AID();
+                        long time=System.currentTimeMillis();
+                        ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
+                        msg1.setContent("Está disponivel?");
+                        msg1.setConversationId(""+time);
+                        DFAgentDescription template = new DFAgentDescription();
+                        ServiceDescription sd = new ServiceDescription();
+                        sd.setType("AnalyzerAgent");
+                        template.addServices(sd);
+
+                        try {
+                            DFAgentDescription[] result = DFService.search(myAgent, template);
+
+                            receiver.setLocalName(result[0].getName().getLocalName().toString());
+                        }catch (Exception e ){e.printStackTrace();}
+
+                        msg1.addReceiver(receiver);
+                        send(msg1);
                     }
-                    AID receiver = new AID();
-                    long time=System.currentTimeMillis();
-                    ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
-                    msg1.setContent("Está disponivel?");
-                    msg1.setConversationId(""+time);
-                    DFAgentDescription template = new DFAgentDescription();
-                    ServiceDescription sd = new ServiceDescription();
-                    sd.setType("AnalyzerAgent");
-                    template.addServices(sd);
-
-                    try {
-                        DFAgentDescription[] result = DFService.search(myAgent, template);
-
-                        receiver.setLocalName(result[0].getName().getLocalName().toString());
-                    }catch (Exception e ){e.printStackTrace();}
-
-                    msg1.addReceiver(receiver);
-                    send(msg1);
 
 
 
@@ -152,14 +170,13 @@ public class SellerAgent extends Agent {
                     }
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("MarketAgent")) {
                     ACLMessage msg1 = msg.createReply();
-                    msg1.setPerformative(ACLMessage.INFORM);
                     StringBuilder st;
                     for (Map.Entry<String,Empresa> e : investCompanies.entrySet()) {
                         st = new StringBuilder();
                         st.append(e.getValue().getCompanyExchangeName() + "_");
                         for (Double d : investargs.get(e.getKey()))
                             st.append("#" + d);
-
+                        msg1.setPerformative(ACLMessage.INFORM);
                         msg1.setContent(st.toString());
                         send(msg1);
 
@@ -169,9 +186,9 @@ public class SellerAgent extends Agent {
                     System.out.println("Received message from "+msg.getSender().getLocalName()+". Conteúdo: "+ msg.getContent());
                     response.setContent("No");
                     response.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+                    send(response);
                 }
 
-                send(response);
 
             }
             block();
