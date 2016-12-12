@@ -86,16 +86,17 @@ public class MarketAgent extends Agent{
                         Double price = 0.7*list.get(0)+ r1.nextDouble() * (1.2*list.get(0)-0.7*list.get(0));
                         Double stock = list.get(1);
                         if(list.get(1)*30/100 < stock) stock = list.get(1)*30/100;
-                        int bought = r1.nextInt(Integer.parseInt(stock.toString()));
+                        int bought = r1.nextInt(stock.intValue());
 
-                        if(efetuadasV.get(e.getKey())==null) {
-                            ArrayList<String> a = new ArrayList<String>();
-                            a.add(bought+"#"+price);
-                            efetuadasV.put(e.getKey(),a);
-                        }
-                        else{
-                            ArrayList<String> a = efetuadasV.get(e.getKey());
-                            a.add(bought+"#"+price);
+                        if(bought > 0) {
+                            if (efetuadasV.get(e.getKey()) == null) {
+                                ArrayList<String> a = new ArrayList<String>();
+                                a.add(bought + "#" + price);
+                                efetuadasV.put(e.getKey(), a);
+                            } else {
+                                ArrayList<String> a = efetuadasV.get(e.getKey());
+                                a.add(bought + "#" + price);
+                            }
                         }
                 }
             }
@@ -146,7 +147,7 @@ public class MarketAgent extends Agent{
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
             if (!efetuadasC.isEmpty()){
-                System.out.println("PROPOSE SENT!!");
+//                System.out.println("PROPOSE SENT!!");
 
                 sd.setType("BidderAgent");
                 template.addServices(sd);
@@ -161,25 +162,20 @@ public class MarketAgent extends Agent{
                 send(msg);
             }
 
-            AID receiver1 = new AID();
-            long time1=System.currentTimeMillis();
-            ACLMessage msg1=new ACLMessage(ACLMessage.PROPOSE);
-            msg1.setContent("Está disponivel?");
-            msg1.setConversationId(""+time);
-            DFAgentDescription template1 = new DFAgentDescription();
-            ServiceDescription sd1 = new ServiceDescription();
             if (!efetuadasV.isEmpty()){
-                sd1.setType("SellerAgent");
-                template1.addServices(sd1);
+//                System.out.println("PROPOSE SENT111111111!!");
+
+                sd.setType("SellerAgent");
+                template.addServices(sd);
 
                 try {
-                    DFAgentDescription[] result1 = DFService.search(myAgent, template);
+                    DFAgentDescription[] result = DFService.search(myAgent, template);
 
-                    receiver.setLocalName(result1[0].getName().getLocalName().toString());
+                    receiver.setLocalName(result[0].getName().getLocalName().toString());
                 }catch (Exception e ){e.printStackTrace();}
 
-                msg.addReceiver(receiver1);
-                send(msg1);
+                msg.addReceiver(receiver);
+                send(msg);
             }
         }
     };
@@ -229,6 +225,7 @@ public class MarketAgent extends Agent{
                     if(vendas.get(a1[0])!=null) vendas.remove(a1[0]);
 
                     vendas.put(a1[0],lista);
+                    System.out.println(a1[0] +"       " + lista.toString());
 
 
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("BidderAgent")) {
@@ -255,16 +252,21 @@ public class MarketAgent extends Agent{
                     System.out.println("Received message from " + msg.getSender().getLocalName() + "???? Conteúdo: " + msg.getContent());
 
                     ACLMessage msg1 = msg.createReply();
+                    ArrayList<String> remove = new ArrayList<>();
                     if(!efetuadasV.isEmpty())
                     for (Map.Entry<String,ArrayList<String>> e : efetuadasV.entrySet()) {
                         StringBuilder st = new StringBuilder();
                         st.append(e.getKey() + "_");
                         for (String s : e.getValue())
-                            st.append("|"+s);
+                            st.append("-"+s);
                         msg1.setPerformative(ACLMessage.INFORM);
                         msg1.setContent(st.toString());
                         send(msg1);
-                        efetuadasV.remove(e.getKey());
+                        remove.add(e.getKey());
+                    }
+
+                    for (String e : remove){
+                        efetuadasV.remove(e);
                     }
 
                 }

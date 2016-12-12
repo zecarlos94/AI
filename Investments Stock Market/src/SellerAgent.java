@@ -107,6 +107,7 @@ public class SellerAgent extends Agent {
                         String[] a2 = a[1].split("#");
                         ArrayList<Double> args = new ArrayList<>();
                         for (String s : a2) {
+                            if (!s.isEmpty())
                             args.add(Double.parseDouble(s));
                         }
                         investargs.remove(temp.getCompanyExchangeName());
@@ -158,15 +159,22 @@ public class SellerAgent extends Agent {
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("AnalyzerAgent")) {
                     ACLMessage msg1 = msg.createReply();
                     StringBuilder st;
+                    ArrayList<String> remove = new ArrayList<>();
                     for (Map.Entry<String,ArrayList<String>> e : historic.entrySet()) {
                         st = new StringBuilder();
-                        st.append(e.getValue().toString() + "_");
+                        st.append(e.getKey().toString() + "_");
                         for (String d : e.getValue())
-                            st.append("#" + d);
-
+                            st.append("-" + d);
+                        msg1.setPerformative(ACLMessage.INFORM);
                         msg1.setContent(st.toString());
                         send(msg1);
-                        historic.remove(e.getKey());
+                        remove.add(e.getKey());
+
+                    }
+
+
+                    for (String e : remove){
+                        historic.remove(e);
                     }
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("MarketAgent")) {
                     ACLMessage msg1 = msg.createReply();

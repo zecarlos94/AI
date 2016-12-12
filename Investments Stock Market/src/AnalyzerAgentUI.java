@@ -41,8 +41,10 @@ public class AnalyzerAgentUI extends Agent{
     private HashMap<String,ArrayList<String>> sold = new HashMap<>();
 
 
+
     //Para cada empresa guardar o capital para investir, o preço máximo por ação, o número de ações que pode comprar no máximo(stockAvailable)
     private HashMap<String,ArrayList<Double>> investing = new HashMap<String,ArrayList<Double>>();
+    private HashMap<String,ArrayList<Double>> notInvesting = new HashMap<String,ArrayList<Double>>();
 
 
     protected DefinerGui myGui;
@@ -268,16 +270,23 @@ public class AnalyzerAgentUI extends Agent{
                companiesNotInvesting.put( e.getKey(), e.getValue() );
                System.out.println("Companhia adicionada???? "+e.getValue().getCompanyExchangeName());
 
-               if(e.getValue().getCurrency().equals("dollar"))
-               args.add(e.getValue().getAsk()*0.93136);
+               double precoAtual = 0.0;
+               if(e.getValue().getCurrency().equals("dollar") || e.getValue().getCurrency().equals("USD") )
+                   precoAtual=e.getValue().getAsk()*0.93136;
                if(e.getValue().getCurrency().equals("euro"))
-                   args.add(e.getValue().getAsk());
+                   precoAtual=e.getValue().getAsk();
                if(e.getValue().getCurrency().equals("yen"))
-                   args.add(e.getValue().getAsk()*0.00813);
+                   precoAtual = e.getValue().getAsk()*0.00813;
                if(e.getValue().getCurrency().equals("british pound"))
-                   args.add(e.getValue().getAsk()*1.18436);
+                   precoAtual = e.getValue().getAsk()*1.18436;
 
-               Double total = 0.0;
+
+
+               if (precoAtual == 0.0)
+                   precoAtual = 25.0;
+               args.add(precoAtual);
+
+               double total = 0.0;
                if (!bought.isEmpty() && bought.get(e.getKey())!=null)
                for(String s :bought.get(e.getKey())){
                    String[] s1 = s.split("#");
@@ -286,12 +295,14 @@ public class AnalyzerAgentUI extends Agent{
                if (!sold.isEmpty() && sold.get(e.getKey())!=null)
                    for(String s :sold.get(e.getKey())){
                    String[] s1 = s.split("#");
+                       if(!s1[0].isEmpty())
                    total -= Double.parseDouble(s1[0]);
                }
                args.add(total);
-               investing.remove(e.getKey());
-               investing.put(e.getKey(),args);
-               args.clear();
+               notInvesting.remove(e.getKey());
+               if(total>0){
+                   notInvesting.put(e.getKey(),args);
+               }
            }
         }
         //System.out.println("#Investible: "+companiesInvesting.size());
@@ -310,6 +321,10 @@ public class AnalyzerAgentUI extends Agent{
         System.out.println(this.getLocalName()+ " starting!");
 
 
+
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("75#134.56");
+        bought.put("PHG",temp);
         myGui=new DefinerGui(this);
         myGui.frame.setVisible(true);
 
@@ -587,7 +602,7 @@ public class AnalyzerAgentUI extends Agent{
                                     String[] a3 = s.split("#");
                                     if(!a3[0].isEmpty() && a3[0] != null )
                                         if( a3[1] != null && !a3[1].isEmpty())
-                                    myGui.jTextArea1.setText(myGui.jTextArea1.getText() + "Foram compradas " + a3[0] +  " ações da empresa " + a[0] + " por " + a3[1] + "€.\n");
+                                    myGui.jTextArea1.setText(myGui.jTextArea1.getText() + "Foram compradas " + a3[0] +  " ações da empresa " + a[0] + " por " + String.format("%.2f",Double.parseDouble(a3[1])) + "€.\n");
                                     a2.add(s);
                                 }
                             }
@@ -600,7 +615,7 @@ public class AnalyzerAgentUI extends Agent{
                                     if (!s.equals("#") && !s.equals("|"))
                                     if(!a3[0].isEmpty() && a3[0] != null )
                                        if( a3[1] != null && !a3[1].isEmpty())
-                                        myGui.jTextArea1.setText(myGui.jTextArea1.getText() + "Foram compradas " + a3[0] + " ações da empresa " + a[0] + " por " + a3[1] + "€.\n");
+                                        myGui.jTextArea1.setText(myGui.jTextArea1.getText() + "Foram compradas " + a3[0] + " ações da empresa " + a[0] + " por " + String.format("%.2f",Double.parseDouble(a3[1])) + "€.\n");
                                     a2.add(s);
 
                                 }
@@ -610,48 +625,51 @@ public class AnalyzerAgentUI extends Agent{
                     }
                 }
 
-                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("SellerAgent1")) {
+                else if(msg.getPerformative()==ACLMessage.INFORM && msg.getSender().getLocalName().equals("SellerAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     String[] a = msg.getContent().split("_");
-                    String[] a1 = a[1].split("|");
+                    String[] a1 = a[1].split("-");
 
                     if (sold.get(a[0])!=null){
                         ArrayList<String> a2 =  sold.get(a[0]);
                         for (String s :a1){
-                            a2.add(s);
+
                             String[] a3 = s.split("#");
-                            if(!a3[0].isEmpty() && a3[0] != null )
-                                if( a3[1] != null && !a3[1].isEmpty())
-                            myGui.jTextArea2.setText(myGui.jTextArea2.getText()+"Foram vendidas "+a3[0]+ "ações da empresa" + a[0] +" por " +a3[1] + "€.\n");
+                            if (!s.equals("#") && !s.equals("|"))
+                                if(!a3[0].isEmpty() && a3[0] != null )
+                                 if( a3[1] != null && !a3[1].isEmpty())
+                            myGui.jTextArea2.setText(myGui.jTextArea2.getText()+"Foram vendidas "+a3[0]+ " ações da empresa " + a[0] +" por " +String.format("%.2f",Double.parseDouble(a3[1])) + "€.\n");
+                            a2.add(s);
                         }
 
                     }
-                    else{
+                    else {
                         ArrayList<String> a2 = new ArrayList<>();
-                        for (String s :a1){
-                            a2.add(s);
-                            String[] a3 = s.split("#");
-                            if(!a3[0].isEmpty() && a3[0] != null )
-                                if( a3[1] != null && !a3[1].isEmpty())
-                            myGui.jTextArea2.setText(myGui.jTextArea2.getText()+"Foram vendidas "+a3[0]+ "ações da empresa" + a[0] +" por " +a3[1] + "€.\n");
+                        for (String s : a1) {
+                            if (s != null && !s.isEmpty()) {
+                                String[] a3 = s.split("#");
+                                System.out.println(s);
+                                if (!s.equals("#") && !s.equals("|"))
+                                    if (!a3[0].isEmpty() && a3[0] != null)
+                                        if (a3[1] != null && !a3[1].isEmpty())
+                                            myGui.jTextArea2.setText(myGui.jTextArea2.getText() + "Foram vendidas " + a3[0] + " ações da empresa " + a[0] + " por " + String.format("%.2f", Double.parseDouble(a3[1])) + "€.\n");
+                            }
+                            sold.put(a[0], a2);
                         }
-                        bought.put(a[0],a2);
                     }
                 }
 
                 else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("SellerAgent")) {
                     System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
 
-                    for(Map.Entry<String,ArrayList<String>>  n: bought.entrySet()){
+                    for(Map.Entry<String,ArrayList<Double>>  n: notInvesting.entrySet()){
                         if(companiesNotInvesting.containsKey(n.getKey())){
                             ACLMessage msg1 = msg.createReply();
                             Empresa e = companiesNotInvesting.get(n.getKey());
                             StringBuilder mensage = new StringBuilder();
                             mensage.append(e.toString() + "_");
-                            ArrayList<Double> args = investing.get(n.getKey());
-                            for (Double d : args)
+                            for (Double d : n.getValue())
                                 mensage.append("#" + d);
-                            mensage.append("#" + n.getValue());
                             msg1.setPerformative(ACLMessage.INFORM);
                             msg1.setContent(mensage.toString());
                             send(msg1);
@@ -659,7 +677,7 @@ public class AnalyzerAgentUI extends Agent{
                     }
                 }
                 else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("BidderAgent")) {
-                    System.out.println("Received message from " + msg.getSender().getLocalName() + "??? Conteúdo: " + msg.getContent());
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     for (Map.Entry<String,Empresa> e : companiesInvesting.entrySet()) {
                         ACLMessage msg1 = msg.createReply();
                         StringBuilder mensage = new StringBuilder();

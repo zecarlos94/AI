@@ -185,7 +185,8 @@ public class BidderAgent extends Agent {
                           st.append("-" + d);
                       msg1.setPerformative(ACLMessage.INFORM);
                       msg1.setContent(st.toString());
-                      send(msg1);remove.add(e.getKey());
+                      send(msg1);
+                      remove.add(e.getKey());
                   }
                   for (String e : remove){
                       historic.remove(e);
