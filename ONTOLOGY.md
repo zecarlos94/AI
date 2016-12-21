@@ -17,7 +17,3 @@ https://www.google.pt/search?client=safari&rls=en&q=microsoft+nyse&ie=UTF-8&oe=U
 
 List of SE available around the world
 https://en.wikipedia.org/wiki/Stock_exchange
-
-Implementing contracts between Agents
-Page 104/105 - "Developing Multi-Agent Systems with JADE", Fabio Luigi Bellifemine, Giovanni Caire, Dominic Greenwood.
-ISBN: 978-0-470-05747-6
