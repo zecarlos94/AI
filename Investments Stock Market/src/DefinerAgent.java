@@ -221,10 +221,7 @@ public class DefinerAgent extends Agent{
             }
         }
 
-        private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-            // TODO add your handling code here:
-            myAgent.addBehaviour(new CommunicationBehaviour(jComboBox1.getSelectedItem().toString(),System.currentTimeMillis()));
-        }
+        
 
         /**
          * @param args the command line arguments
@@ -350,53 +347,5 @@ public class DefinerAgent extends Agent{
 
 
 
-    public class CommunicationBehaviour extends SimpleBehaviour {
-
-        protected String content;
-        protected long time;
-        public CommunicationBehaviour(String f,long time){
-            content = f;
-            this.time = time;
-        }
-
-        @Override
-        public boolean done() {
-            return (System.currentTimeMillis()>(time+10000));
-        }
-
-        @Override
-        public void action() {
-
-            AID receiver=new AID();
-            // o receiver será o agente sector
-            // TODO dar o nome sector ao SectorAgent
-            receiver.setLocalName("SectorAgent");
-            long time=System.currentTimeMillis();
-            ACLMessage msg=new ACLMessage(ACLMessage.PROPOSE);
-            msg.setContent("Está disponivel?");
-            msg.setConversationId(""+time);
-            msg.addReceiver(receiver);
-            send(msg);
-
-            ACLMessage msg1 = receive();
-            while(msg1==null) msg1 = receive();
-            if(msg1 != null){
-                if(msg1.getPerformative()==ACLMessage.ACCEPT_PROPOSAL){
-
-
-                    ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
-                    System.out.println("Received message from "+msg1.getSender().getLocalName()+". Conteúdo: "+ msg1.getContent());
-                    time = System.currentTimeMillis();
-                    msg2.setContent(content);
-                    msg2.setConversationId(""+time);
-                    msg2.addReceiver(receiver);
-                    send(msg2);
-                }else{
-                    //JOptionPane.showMessageDialog(myGui.frame,"SectorAgent not available, try again later!");
-                }
-            }
-            block();
-        }
-    };
 
 }
