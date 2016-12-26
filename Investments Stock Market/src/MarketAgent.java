@@ -71,7 +71,6 @@ public class MarketAgent extends Agent{
 
 
 
-            System.out.println("SOMETHING!!!!!");
             if (!vendas.isEmpty())
             for (Map.Entry<String,ArrayList<Double>> e : vendas.entrySet()){
                 ArrayList<Double> list = e.getValue();
@@ -84,8 +83,7 @@ public class MarketAgent extends Agent{
                         break;
                     default:
                         Double price = 0.7*list.get(0)+ r1.nextDouble() * (1.2*list.get(0)-0.7*list.get(0));
-                        Double stock = list.get(1);
-                        if(list.get(1)*30/100 < stock) stock = list.get(1)*30/100;
+                        Double stock = list.get(1)*30/100;
                         int bought = r1.nextInt(stock.intValue());
 
                         if(bought > 0) {
@@ -192,7 +190,7 @@ public class MarketAgent extends Agent{
             if(msg != null){
                 ACLMessage response=msg.createReply();
                 if(msg.getPerformative()==ACLMessage.PROPOSE){
-                    System.out.println("Received message from " + msg.getSender().getLocalName() + "! Conteúdo: " + msg.getContent());
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
                     response.setContent("Yes");
                     response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                     send(response);
@@ -230,7 +228,7 @@ public class MarketAgent extends Agent{
 
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("BidderAgent")) {
 
-                    System.out.println("Received message from " + msg.getSender().getLocalName() + "!!! Conteúdo: " + msg.getContent());
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
 
                     ACLMessage msg1 = msg.createReply();
                     ArrayList<String> remove = new ArrayList<>();
@@ -249,7 +247,7 @@ public class MarketAgent extends Agent{
                         efetuadasC.remove(e);
                     }
                 }else if(msg.getPerformative()==ACLMessage.ACCEPT_PROPOSAL && msg.getSender().getLocalName().equals("SellerAgent")) {
-                    System.out.println("Received message from " + msg.getSender().getLocalName() + "???? Conteúdo: " + msg.getContent());
+                    System.out.println("Received message from " + msg.getSender().getLocalName() + ". Conteúdo: " + msg.getContent());
 
                     ACLMessage msg1 = msg.createReply();
                     ArrayList<String> remove = new ArrayList<>();
